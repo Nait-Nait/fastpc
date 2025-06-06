@@ -1,0 +1,198 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #1a1a2e;
+  padding: 20px;
+}
+
+.wrapper {
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+}
+
+.form {
+  background: linear-gradient(145deg, #3a3a50, #2b2b3f);
+  padding: 40px;
+  border-radius: 10px;
+  width: 450px;
+  color: white;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  font-family: Arial, sans-serif;
+}
+
+.socialBox {
+  background-color: #3333332a;
+  padding: 20px;
+  border-radius: 10px;
+  width: 300px;
+  color: white;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0);
+  margin-top: 60px;
+}
+
+.title {
+  font-size: 28px;
+  margin-bottom: 30px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.labelGroup {
+  background-color: #2b2b3f;
+  padding: 15px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+}
+
+label {
+  font-weight: bold;
+  font-size: 15px;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.helperText {
+  font-size: 12px;
+  color: #b0b0c0;
+  margin-bottom: 10px;
+}
+
+.input {
+  width: 95%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #555555;
+  border-radius: 4px;
+  background-color: #aaaaaa;
+  color: #ffffff;
+  font-size: 14px;
+  transition: background-color 0.2s, border 0.2s;
+}
+
+.input:focus {
+  background-color: #cfd1d9;
+  color: #000000;
+  border-color: #8f5fff;
+  outline: none;
+}
+
+.checkbox {
+  width: auto;
+  margin-right: 8px;
+}
+
+
+.birthdaySelects {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.checkboxGroup {
+  margin-bottom: 15px;
+}
+
+.checkboxLabel {
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+}
+
+.termsText {
+  font-size: 13px;
+}
+
+.submitButton {
+  background: linear-gradient(145deg, #8f5fff, #6c45d5);
+  color: white;
+  padding: 15px;
+  width: 100%;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 30px;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+
+.submitButton:hover {
+  background: linear-gradient(145deg, #a175ff, #7b54e0);
+}
+
+.socialButton {
+  width: 100%;
+  padding: 15px;
+  margin: 10px 0;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  border: none;
+}
+
+.facebook {
+  background-color: #4267B2;
+  color: white;
+}
+
+.google {
+  background-color: #DB4437;
+  color: white;
+}
+
+.apple {
+  background-color: #ffffff;
+  color: black;
+  border: 1px solid #333333;
+}
+
+.passwordWrapper {
+  position: relative;
+}
+
+.eyeButton {
+  position: absolute;
+  top: 58%;
+  right: 10px;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  color: #666666;
+}
+
+.eyeButton:hover {
+  color: #333333;
+}
+
+.eyeButton:focus,
+.eyeButton:active {
+  outline: none;
+  background: transparent;
+}
+
+.select {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #555555;
+  border-radius: 4px;
+  background-color: #aaaaaa;
+  color: #333333;
+  font-size: 14px;
+  transition: background-color 0.2s, border 0.2s;
+}
+
+.select:focus {
+  background-color: #cfd1d9;
+  color: #000000;
+  border-color: #8f5fff;
+  outline: none;
+}
+
+

@@ -1,0 +1,101 @@
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 70px;
+  background-color: #1111116c;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  z-index: 1000;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.075);
+  backdrop-filter: blur(8px);
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-left: 10rem;
+}
+
+.search {
+  flex: 1;
+  margin: 0 2rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid #555555;
+  background-color: #cccccc;
+  border-radius: 5px;
+  max-width: 400px;
+}
+
+.search:focus {
+  background-color: #cfd1d9;
+  color: #000000;
+  border-color: #8f5fff;
+  outline: none;
+}
+
+.nav a {
+  margin: 0 1rem;
+  color: #ececec;
+  text-decoration: none;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.menu {
+  display: none;
+  margin-left: 0.5rem;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdownButton {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+}
+
+.arrow {
+  margin-left: 5px;
+  font-size: 0.7rem;
+}
+
+.profileLink {
+  color: #aaaaaa;
+  margin-left: 1rem;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.profileText {
+  margin-left: 0.4rem;
+}
+.profileLink i {
+  font-size: 1.3rem;
+}
+
+.profileLink:hover {
+  color: #ffffff;
+}
