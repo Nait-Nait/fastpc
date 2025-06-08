@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  front:
+    build: ./front
+    depends_on:
+      - database
+      - back
+
+  back:
+    build: ./back
+    depends_on:
+      - database
+  
+  database:
+    image: 'postgres:latest'
+    ports:
+      - 15432:5432
+    environment:
+      - POSTGRES_USER=superuser
+      - POSTGRES_PASSWORD=superpass
+    networks:
+      - postgres-network
+    volumes:
+      - ./db-data/:/var/lib/postgresql/data/
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      
+networks: 
+  postgres-network:
+    driver: bridge
