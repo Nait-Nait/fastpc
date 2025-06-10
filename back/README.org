@@ -1,0 +1,96 @@
+#+TITLE: Documentación de API
+#+AUTHOR: Diego Peña y Lillo (@diegopyl1209)
+#+OPTIONS: toc:t num:nil
+
+* Endpoints
+
+** /products/list :: GET
+Obtiene los productos guardados según la categoría y el ID del componente.
+
+- Parámetros query:
+  - ~category~ (string): Categoría del componente (ej: GPU, CPU)
+  - ~componentid~ (string): ID del componente
+
+- Respuestas:
+  - 200: Lista de productos encontrados.
+  - 500: Si faltan parámetros o la categoría es inválida.
+
+** /products/scrape :: GET
+Scrapea información actualizada de un componente y devuelve el resultado.
+
+- Parámetros query:
+  - ~category~ (string): Categoría del componente (ej: GPU, CPU)
+  - ~componentid~ (string): ID del componente
+
+- Respuestas:
+  - 200: Resultado del scraping.
+  - 400: Si faltan parámetros o la categoría es inválida.
+
+** /users/register :: POST
+Registra un nuevo usuario.
+
+- Body JSON:
+  - ~email~ (string): Correo electrónico del usuario
+  - ~password~ (string): Contraseña del usuario
+
+- Respuestas:
+  - 200: Usuario registrado exitosamente.
+
+** /users/login :: POST
+Autentica un usuario y devuelve un token.
+
+- Body JSON:
+  - ~email~ (string): Correo electrónico
+  - ~password~ (string): Contraseña
+
+- Respuestas:
+  - 200: Login exitoso, retorna un token.
+  - 401: Credenciales inválidas.
+
+** /components/list :: GET
+Lista los componentes guardados de una categoría específica.
+
+- Parámetros query:
+  - ~category~ (string): Categoría del componente (ej: GPU, CPU)
+
+- Respuestas:
+  - 200: Lista de componentes.
+  - 400: Si la categoría es inválida o falta.
+
+** /components/addgpu :: POST
+Agrega un componente GPU.
+
+- Body JSON:
+  - ~name~ (string)
+  - ~benchmarkscore~ (number)
+  - ~vram~ (number)
+
+- Respuestas:
+  - 200: GPU agregada correctamente.
+  - 400: Si faltan parámetros.
+
+** /components/addcpu :: POST
+Agrega un componente CPU.
+
+- Body JSON:
+  - ~name~ (string)
+  - ~benchmarkscore~ (number)
+  - ~frecuency~ (number)
+  - ~cores~ (number)
+  - ~threads~ (number)
+  - ~socket~ (string)
+  - ~tdp~ (number)
+  - ~hyperthreading~ (boolean)
+
+- Respuestas:
+  - 200: CPU agregada correctamente.
+  - 400: Si faltan parámetros.
+
+* Ejemplos con curl
+
+#+BEGIN_SRC bash
+curl "http://localhost:3000/products/list?category=GPU&componentid=abc123"
+curl -X POST http://localhost:3000/users/register \
+  -H "Content-Type: application/json" \
+  -d '{"email":"user@example.com","password":"123456"}'
+#+END_SRC

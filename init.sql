@@ -1,0 +1,1 @@
+CREATE DATABASE fastpc_db;
