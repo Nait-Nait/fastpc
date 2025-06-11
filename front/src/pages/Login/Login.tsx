@@ -1,16 +1,45 @@
 import React, { useState } from "react";
 import styles from "./Login.module.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; // 👈 usamos esto para redirigir
+// Si no tienes react-router-dom v6+, asegúrate de tenerlo instalado
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const navigate = useNavigate(); // 👈 para redirigir después del login
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Login intent for:", { email, password });
+
+    try {
+      const res = await fetch("http://localhost:8888/api/v1/users/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Error al iniciar sesión");
+      }
+
+      alert("¡Inicio de sesión exitoso!");
+
+      localStorage.setItem("token", data.token);
+      navigate("/home");
+    } catch (err: any) {
+      alert(`Fallo en el login: ${err.message}`);
+    }
   };
+
   return (
     <div className={styles.container}>
       <form onSubmit={handleSubmit} className={styles.form}>

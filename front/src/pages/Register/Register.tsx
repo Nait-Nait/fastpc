@@ -5,57 +5,45 @@ const Register: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [birthday, setBirthday] = useState({ day: "", month: "", year: "" });
   const [publicProfile, setPublicProfile] = useState(false);
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [acceptNews, setAcceptNews] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log({
-      email,
-      password,
-      confirmPassword,
-      birthday,
-      publicProfile,
-      acceptTerms,
-      acceptNews,
-    });
-  };
 
-  const renderDays = () => {
-    const days = Array.from({ length: 31 }, (_, i) => i + 1);
-    return days.map((day) => <option key={day}>{day}</option>);
-  };
+    if (password !== confirmPassword) {
+      alert("Las contraseñas no coinciden");
+      return;
+    }
 
-  const renderMonths = () => {
-    const months = [
-      "Enero",
-      "Febrero",
-      "Marzo",
-      "Abril",
-      "Mayo",
-      "Junio",
-      "Julio",
-      "Agosto",
-      "Septiembre",
-      "Octubre",
-      "Noviembre",
-      "Diciembre",
-    ];
-    return months.map((month, index) => (
-      <option key={index} value={month}>
-        {month}
-      </option>
-    ));
-  };
+    try {
+      const res = await fetch("http://localhost:8888/api/v1/users/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
 
-  const renderYears = () => {
-    const currentYear = new Date().getFullYear();
-    const years = Array.from({ length: 100 }, (_, i) => currentYear - i);
-    return years.map((year) => <option key={year}>{year}</option>);
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Error al registrar");
+      }
+
+      alert("¡Usuario registrado con éxito!");
+
+      // Puedes guardar el token si quieres
+      // localStorage.setItem("token", data.token);
+    } catch (err: any) {
+      alert(`Fallo en el registro: ${err.message}`);
+    }
   };
 
   return (
@@ -138,52 +126,6 @@ const Register: React.FC = () => {
                   }`}
                 ></i>
               </button>
-            </div>
-          </div>
-          {/* TODO: Cumpleaños (para recordar ubicación) */}
-          <div className={styles.labelGroup}>
-            <label>Cumpleaños</label>
-            <p className={styles.helperText}>
-              Por favor, introduce tu fecha de nacimiento real. Usaremos esta
-              información para enviarte cupones de oferta especiales en tu
-              cumpleaños. Nunca haremos pública tu fecha de nacimiento ni la
-              compartiremos con terceros. Asegúrate de ingresar una fecha válida
-              para poder disfrutar de estos beneficios.
-            </p>
-            <div className={styles.birthdaySelects}>
-              <select
-                className={styles.select}
-                value={birthday.day}
-                onChange={(e) =>
-                  setBirthday({ ...birthday, day: e.target.value })
-                }
-                required
-              >
-                <option value="">Día</option>
-                {renderDays()}
-              </select>
-              <select
-                className={styles.select}
-                value={birthday.month}
-                onChange={(e) =>
-                  setBirthday({ ...birthday, month: e.target.value })
-                }
-                required
-              >
-                <option value="">Mes</option>
-                {renderMonths()}
-              </select>
-              <select
-                className={styles.select}
-                value={birthday.year}
-                onChange={(e) =>
-                  setBirthday({ ...birthday, year: e.target.value })
-                }
-                required
-              >
-                <option value="">Año</option>
-                {renderYears()}
-              </select>
             </div>
           </div>
 
