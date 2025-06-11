@@ -1,36 +1,30 @@
-import { FastifyInstance, FastifyPluginOptions } from "fastify";
-import { UserRepoHolder } from "../singletons/UserRepoHolder";
+import { FastifyInstance, FastifyPluginOptions } from 'fastify';
+import { UserRepoHolder } from '../singletons/UserRepoHolder';
 
-async function userRoutes(
-  fastify: FastifyInstance,
-  opts: FastifyPluginOptions
-) {
-  fastify.post("/register", async (request, reply) => {
-    const userRepo = UserRepoHolder.getInstance();
-    const { email, password } = request.body as {
-      email: string;
-      password: string;
-    };
 
-    try {
-      const token = await userRepo.createUser(email, password);
-      reply.send({ status: "ok", token });
-    } catch (err: any) {
-      reply.status(400).send({ error: err.message });
-    }
-  });
 
-  fastify.post("/login", async (request, reply) => {
-    const userRepo = UserRepoHolder.getInstance();
+async function userRoutes(fastify: FastifyInstance, opts: FastifyPluginOptions) {
+    
 
-    const { email, password } = request.body as {
-      email: string;
-      password: string;
-    };
-    const token = await userRepo.login(email, password);
+    fastify.post("/register", async (request, reply) => {
+        const userRepo = UserRepoHolder.getInstance();
 
-    reply.send({ status: "ok", token: token });
-  });
+        const { email, password } = request.body as { email: string; password: string };
+        const token = await userRepo.createUser(email, password)
+        console.log(token)
+        reply.send({ status: "ok" })
+    })
+
+    fastify.post("/login", async (request, reply) => {
+        const userRepo = UserRepoHolder.getInstance();
+
+        const { email, password } = request.body as { email: string; password: string };
+        const token = await userRepo.login(email, password)
+
+        reply.send({ status: "ok", token: token })
+    })
+
+    
 }
 
 export default userRoutes;

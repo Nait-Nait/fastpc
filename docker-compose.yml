@@ -6,8 +6,6 @@ services:
     depends_on:
       - database
       - back
-    networks:
-      - postgres-network
     ports:
       - 5173:5173
 
@@ -15,8 +13,6 @@ services:
     build: ./back
     depends_on:
       - database
-    networks:
-      - postgres-network
     ports:
       - 8888:8888
 
@@ -40,8 +36,6 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: nait@nait.com
       PGADMIN_DEFAULT_PASSWORD: sunny
-    networks:
-      - postgres-network
     depends_on:
       - database
 
