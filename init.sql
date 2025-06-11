@@ -1,1 +1,1 @@
-CREATE DATABASE todosolo;
+CREATE DATABASE fastpc;

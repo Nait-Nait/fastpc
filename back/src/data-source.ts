@@ -10,7 +10,7 @@ export const AppDataSource = new DataSource({
     port: 15432,
     username: "superuser",
     password: "superpass",
-    database: "todosolo",
+    database: "fastpc",
     synchronize: true,
     logging: false,
     entities: [ GPUComponent, GPUProduct, CPUComponent, User ],
