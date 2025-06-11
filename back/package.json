@@ -21,6 +21,7 @@
    "scripts": {
       "build": "tsc -p tsconfig.json",
       "start": "node build/index.js",
+      "prod": "npm run build && npm run start",
       "dev": "ts-node src/index.ts",
       "typeorm": "typeorm-ts-node-commonjs"
    }

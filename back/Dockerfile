@@ -1,8 +1,11 @@
-# nixos > cualquier distro de linux
-FROM nixos/nix
+FROM node:20-alpine
 
 WORKDIR /app
 
+COPY package*.json ./
+
+RUN npm install
+
 COPY . .
 
-CMD ["nix-shell", "--pure", "shell.nix"]
+CMD ["npm", "run", "prod"]
