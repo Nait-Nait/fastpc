@@ -1,1 +1,1 @@
-CREATE DATABASE fastpc_db;
+CREATE DATABASE fastpc;
