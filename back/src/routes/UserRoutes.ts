@@ -11,8 +11,7 @@ async function userRoutes(fastify: FastifyInstance, opts: FastifyPluginOptions) 
 
         const { email, password } = request.body as { email: string; password: string };
         const token = await userRepo.createUser(email, password)
-        console.log(token)
-        reply.send({ status: "ok" })
+        reply.send({ status: "ok", token: token })
     })
 
     fastify.post("/login", async (request, reply) => {

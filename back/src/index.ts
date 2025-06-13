@@ -1,5 +1,6 @@
 import { AppDataSource } from "./data-source"
 import fastify from 'fastify'
+import cors from '@fastify/cors'
 import fastifyJwt from '@fastify/jwt'
 import { WinpyComponentSource } from "./data/WinpyComponentSource";
 import { DBEntityManager } from "./singletons/DbEntityManager";
@@ -24,7 +25,13 @@ AppDataSource.initialize().then(async () => {
     const port:number = Number(process.env.PORT ?? 8888);
 
     const server = fastify()
-    server.register(fastifyJwt, {
+    await server.register(cors, {
+    origin: (origin, cb) => {
+    	cb(null, true)
+    	return
+	}
+    })
+    await server.register(fastifyJwt, {
         secret: "supersecret",
     });
 

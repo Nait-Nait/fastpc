@@ -9,7 +9,7 @@ pkgs.mkShell {
   ];
 
   shellHook = ''
-    pnpm run build && pnpm run preview
+    pnpm i && pnpm run build && pnpm run preview
   '';
 }
 
