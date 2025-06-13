@@ -30,17 +30,15 @@ const Register: React.FC = () => {
           password,
         }),
       });
-
       const data = await res.json();
 
-      if (!res.ok) {
-        throw new Error(data.error || "Error al registrar");
+      if (res.status !== "ok") {
+        throw new Error(data.message || "Error al registrar");
       }
 
       alert("¡Usuario registrado con éxito!");
 
-      // Puedes guardar el token si quieres
-      // localStorage.setItem("token", data.token);
+      localStorage.setItem("token", data.token);
     } catch (err: any) {
       alert(`Fallo en el registro: ${err.message}`);
     }

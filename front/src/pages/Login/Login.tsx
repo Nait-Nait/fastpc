@@ -27,8 +27,8 @@ const Login: React.FC = () => {
 
       const data = await res.json();
 
-      if (!res.ok) {
-        throw new Error(data.error || "Error al iniciar sesión");
+      if (res.status !== "ok") {
+        throw new Error(data.message || "Error al iniciar sesion");
       }
 
       alert("¡Inicio de sesión exitoso!");
