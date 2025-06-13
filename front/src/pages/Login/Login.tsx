@@ -27,16 +27,12 @@ const Login: React.FC = () => {
 
       const data = await res.json();
 
-      if (res.status !== "ok") {
-        throw new Error(data.message || "Error al iniciar sesion");
-      }
-
       alert("¡Inicio de sesión exitoso!");
 
       localStorage.setItem("token", data.token);
       navigate("/home");
     } catch (err: any) {
-      alert(`Fallo en el login: ${err.message}`);
+      alert(`Fallo en el login: ${data.message || err.message}`);
     }
   };
 

@@ -32,15 +32,11 @@ const Register: React.FC = () => {
       });
       const data = await res.json();
 
-      if (res.status !== "ok") {
-        throw new Error(data.message || "Error al registrar");
-      }
-
       alert("¡Usuario registrado con éxito!");
 
       localStorage.setItem("token", data.token);
     } catch (err: any) {
-      alert(`Fallo en el registro: ${err.message}`);
+      alert(`Fallo en el registro: ${data.message || err.message}`);
     }
   };
 
