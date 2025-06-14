@@ -1,43 +1,31 @@
 import React, { useState } from "react";
 import styles from "./Login.module.css";
-import { Link, useNavigate } from "react-router-dom"; // 👈 usamos esto para redirigir
-// Si no tienes react-router-dom v6+, asegúrate de tenerlo instalado
+import { Link } from "react-router-dom";
+import { UserRepositoryImpl } from "@/repositories/UserRepository";
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const navigate = useNavigate(); // 👈 para redirigir después del login
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      const res = await fetch("http://localhost:8888/api/v1/users/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-      });
+      const userRepo = new UserRepositoryImpl()
+      
+      await userRepo.login(email, password)
 
-      const data = await res.json();
+      alert("Inicio de Sesion Exitoso!")
 
-      alert("¡Inicio de sesión exitoso!");
-
-      localStorage.setItem("token", data.token);
-      navigate("/home");
+      window.location.href = "/"
     } catch (err: any) {
-      alert(`Fallo en el login: ${data.message || err.message}`);
+      alert(`Fallo en el login: ${err.message}`);
     }
   };
 
   return (
-    <div className={styles.container}>
+    <div className="flex flex-row justify-center">
       <form onSubmit={handleSubmit} className={styles.form}>
         <h2 className={styles.title}>Bienvenid@ a FastPc</h2>
         <p className={styles.subtitle}>

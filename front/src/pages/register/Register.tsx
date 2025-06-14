@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import styles from "./Register.module.css";
+import { UserRepositoryImpl } from "@/repositories/UserRepository";
 
 const Register: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -20,28 +21,20 @@ const Register: React.FC = () => {
     }
 
     try {
-      const res = await fetch("http://localhost:8888/api/v1/users/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-      });
-      const data = await res.json();
+      const userRepo = new UserRepositoryImpl()
+
+      await userRepo.createUser(email, password)
 
       alert("¡Usuario registrado con éxito!");
-
-      localStorage.setItem("token", data.token);
+      
+      window.location.href = "/login"
     } catch (err: any) {
-      alert(`Fallo en el registro: ${data.message || err.message}`);
+      alert(`Fallo en el registro: ${err.message}`);
     }
   };
 
   return (
-    <div className={styles.container}>
+    <div className="flex flex-row justify-center">
       <div className={styles.wrapper}>
         <form onSubmit={handleSubmit} className={styles.form}>
           <h2 className={styles.title}>¡ÚNETE AHORA!</h2>
@@ -115,9 +108,8 @@ const Register: React.FC = () => {
                 }
               >
                 <i
-                  className={`fas ${
-                    showConfirmPassword ? "fa-eye-slash" : "fa-eye"
-                  }`}
+                  className={`fas ${showConfirmPassword ? "fa-eye-slash" : "fa-eye"
+                    }`}
                 ></i>
               </button>
             </div>
@@ -160,26 +152,6 @@ const Register: React.FC = () => {
             ¡HECHO! ¡VAMOS A CREAR UNA CUENTA!
           </button>
         </form>
-
-        {/* TODO: Panel de redes sociales (para recordar ubicación) */}
-        <div className={styles.socialBox}>
-          <h3>O PUEDES ELEGIR OTRA FORMA DE REGISTRARTE</h3>
-          <button className={`${styles.socialButton} ${styles.facebook}`}>
-            <i
-              className="fab fa-facebook-f"
-              style={{ marginRight: "10px" }}
-            ></i>
-            FACEBOOK
-          </button>
-          <button className={`${styles.socialButton} ${styles.google}`}>
-            <i className="fab fa-google" style={{ marginRight: "10px" }}></i>
-            GOOGLE
-          </button>
-          <button className={`${styles.socialButton} ${styles.apple}`}>
-            <i className="fab fa-apple" style={{ marginRight: "10px" }}></i>
-            APPLE
-          </button>
-        </div>
       </div>
     </div>
   );

@@ -23,6 +23,15 @@ async function userRoutes(fastify: FastifyInstance, opts: FastifyPluginOptions) 
         reply.send({ status: "ok", token: token })
     })
 
+    fastify.post("/verify", async (request, reply) => {
+        const userRepo = UserRepoHolder.getInstance();
+
+        const { token } = request.body as { token: string };
+
+        const decodedData = await userRepo.verifyJWTToken(token)
+
+        reply.send({status: "ok", email: decodedData.email, userId: decodedData.userId})
+    })
     
 }
 
