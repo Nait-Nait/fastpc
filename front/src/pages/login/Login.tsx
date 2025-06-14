@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import styles from "./Login.module.css";
 import { Link } from "react-router-dom";
 import { UserRepositoryImpl } from "@/repositories/UserRepository";
 import { Input } from "@/components/ui/input";
@@ -31,9 +30,10 @@ const Login: React.FC = () => {
     <div className="flex flex-row justify-center">
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-[370px] flex flex-col items-center rounded-[15px] px-8 py-20 shadow-[0_4px_20px_rgba(0,0,0,0.5)]"
+        className="w-full max-w-[400px] flex flex-col items-center rounded-[15px] px-8 py-20 border-2 shadow-[0_4px_20px_rgba(0,0,0,0.5)]"
         style={{
           background: "linear-gradient(145deg, #3a3a50, #2b2b3f)",
+          borderColor: "#9b5de5",
         }}
       >
         <h2 className="text-2xl text-center font-medium text-white">
@@ -94,7 +94,7 @@ const Login: React.FC = () => {
           </div>
         </div>
 
-        <Button type="submit" className="mt-5 mb-5">
+        <Button type="submit" className="mt-7 mb-5">
           INICIAR SESIÓN
         </Button>
 
