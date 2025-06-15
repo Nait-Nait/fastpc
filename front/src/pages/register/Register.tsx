@@ -146,25 +146,15 @@ const Register: React.FC = () => {
               />
               Acepto Términos y Condiciones, Política de Privacidad y Cookies
             </label>
-
-            <label className="flex items-center text-sm">
-              <input
-                type="checkbox"
-                className="w-auto mr-2"
-                checked={acceptNews}
-                onChange={(e) => setAcceptNews(e.target.checked)}
-              />
-              ¡Quiero recibir novedades y noticias!
-            </label>
           </div>
 
           <Button
             type="submit"
-            className="block mx-auto uppercase font-semibold tracking-wide px-10 text-base
+            className="block mx-auto px-26 text-base
 
 "
           >
-            ¡VAMOS A CREAR UNA CUENTA!
+            CREAR CUENTA
           </Button>
         </form>
       </div>
