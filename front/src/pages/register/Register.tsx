@@ -40,7 +40,7 @@ const Register: React.FC = () => {
           onSubmit={handleSubmit}
           className="w-[450px] p-10 rounded-[10px] text-white border-2 shadow-[0_4px_20px_rgba(0,0,0,0.5)]"
           style={{
-            background: "linear-gradient(145deg, #3a3a50, #2b2b3f)",
+            background: "linear-gradient(145deg,#262830)",
             fontFamily: "Arial, sans-serif",
             borderColor: "#9b5de5",
           }}
@@ -49,7 +49,7 @@ const Register: React.FC = () => {
             ¡ÚNETE AHORA!
           </h2>
 
-          <div className="bg-[#2b2b3f] p-[15px] rounded-[6px] mb-5">
+          <div className="bg-[#262830] p-[15px] rounded-[6px] mb-5">
             {/* TODO: Email (para recordar ubicación) */}
             <label>Email</label>
             <p className="text-xs text-[#b0b0c0] mb-2">
@@ -67,7 +67,7 @@ const Register: React.FC = () => {
 
           {/* TODO: Input contraseña (para recordar ubicación) */}
 
-          <div className="bg-[#2b2b3f] p-[15px] rounded-[6px] mb-5">
+          <div className="bg-[#262830] p-[15px] rounded-[6px] mb-5">
             <label>Contraseña</label>
             <p className="text-xs text-[#b0b0c0] mb-2">
               Usa al menos 6 caracteres. Incluye letras, números y un carácter
@@ -99,8 +99,11 @@ const Register: React.FC = () => {
           </div>
 
           {/* TODO: Input repetir contraseña (para recordar ubicación) */}
-          <div className="bg-[#2b2b3f] p-[15px] rounded-[6px] mb-5">
+          <div className="bg-[#262830] p-[15px] rounded-[6px] mb-5">
             <label>Repite contraseña</label>
+            <p className="text-xs text-[#b0b0c0] mb-2">
+              Por favor, repite la contraseña para confirmar.
+            </p>
 
             <div className="relative w-full">
               <Input
@@ -132,7 +135,7 @@ const Register: React.FC = () => {
             </div>
           </div>
 
-          <div className="bg-[#2b2b3f] p-[15px] rounded-[6px] mb-5">
+          <div className="bg-[#262830] p-[15px] rounded-[6px] mb-5">
             <label className="flex items-center text-sm">
               <input
                 type="checkbox"
