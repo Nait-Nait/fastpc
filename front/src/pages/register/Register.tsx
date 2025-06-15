@@ -10,8 +10,16 @@ const Register: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [acceptTerms, setAcceptTerms] = useState(false);
 
-  function PasswordInput({ placeholder, password, setPassword }: { placeholder: string, password: any, setPassword: any }): any {
-    const [showPassword, setShowPassword] = useState(false)
+  function PasswordInput({
+    placeholder,
+    password,
+    setPassword,
+  }: {
+    placeholder: string;
+    password: any;
+    setPassword: any;
+  }): any {
+    const [showPassword, setShowPassword] = useState(false);
 
     return (
       <div className="relative w-full">
@@ -33,10 +41,14 @@ const Register: React.FC = () => {
           }
           className="absolute right-3 top-1/2 -translate-y-1/2 z-10 text-gray-500 hover:text-gray-700"
         >
-          {showPassword ? <Eye className="cursor-pointer" size={18} /> : <EyeClosed className="cursor-pointer" size={18} />}
+          {showPassword ? (
+            <Eye className="cursor-pointer" size={18} />
+          ) : (
+            <EyeClosed className="cursor-pointer" size={18} />
+          )}
         </button>
       </div>
-    )
+    );
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -70,9 +82,7 @@ const Register: React.FC = () => {
             borderColor: "var(--main)",
           }}
         >
-          <h2 className="text-2xl mb-2 text-center font-bold">
-            ¡ÚNETE AHORA!
-          </h2>
+          <h2 className="text-2xl mb-2 text-center font-bold">¡ÚNETE AHORA!</h2>
 
           <div className="bg-[var(--background)] p-4 mb-2">
             <label>Email</label>
@@ -96,11 +106,12 @@ const Register: React.FC = () => {
               especial.
             </p>
 
-            {PasswordInput({ placeholder: "Contraseña", password, setPassword })}
-
+            {PasswordInput({
+              placeholder: "Contraseña",
+              password,
+              setPassword,
+            })}
           </div>
-
-
 
           <div className="bg-[var(--background)] p-4 mb-2">
             <label>Repite contraseña</label>
@@ -108,7 +119,11 @@ const Register: React.FC = () => {
               Por favor, repite la contraseña para confirmar.
             </p>
 
-            {PasswordInput({ placeholder: "Confirmar Contraseña", password: confirmPassword, setPassword: setConfirmPassword })}
+            {PasswordInput({
+              placeholder: "Confirmar Contraseña",
+              password: confirmPassword,
+              setPassword: setConfirmPassword,
+            })}
           </div>
 
           <div className="bg-[var(--background)] p-4 mb-2">
@@ -118,12 +133,13 @@ const Register: React.FC = () => {
                 className="w-auto mr-2"
                 checked={acceptTerms}
                 onChange={(e) => setAcceptTerms(e.target.checked)}
-                required />
+                required
+              />
               Acepto Términos y Condiciones, Política de Privacidad y Cookies
             </label>
           </div>
 
-          <Button type="submit" className="block w-full text-base">
+          <Button type="submit" className="block text-base px-21 mx-auto">
             CREAR CUENTA
           </Button>
         </form>

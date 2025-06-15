@@ -90,12 +90,16 @@ const Login: React.FC = () => {
                 }
                 className="absolute right-3 top-1/2 -translate-y-1/2 z-10 text-gray-500 hover:text-gray-700"
               >
-                {showPassword ? <Eye className="cursor-pointer" size={18} /> : <EyeClosed className="cursor-pointer" size={18} />}
+                {showPassword ? (
+                  <Eye className="cursor-pointer" size={18} />
+                ) : (
+                  <EyeClosed className="cursor-pointer" size={18} />
+                )}
               </button>
             </div>
           </div>
 
-          <Button type="submit" className="mt-7 mb-5 px-26 text-base">
+          <Button type="submit" className="mt-7 mb-5 px-24 text-base mx-auto">
             INICIAR SESIÓN
           </Button>
 
@@ -104,7 +108,9 @@ const Login: React.FC = () => {
               <p>
                 <a
                   href="#"
-                  onClick={() => { alert("pues eri entero weko") }}
+                  onClick={() => {
+                    alert("pues eri entero weko");
+                  }}
                   className="text-base underline hover:no-underline"
                 >
                   ¿No puedes conectarte?
