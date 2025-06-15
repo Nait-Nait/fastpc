@@ -1,16 +1,43 @@
 import React, { useState } from "react";
 import { UserRepositoryImpl } from "@/repositories/UserRepository";
 import { Button } from "@/components/ui/button";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Input } from "@/components/ui/input";
+import { Eye, EyeClosed } from "lucide-react";
+import { Card } from "@/components/ui/card";
 const Register: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [acceptTerms, setAcceptTerms] = useState(false);
-  const [acceptNews, setAcceptNews] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  function PasswordInput({ placeholder, password, setPassword }: { placeholder: string, password: any, setPassword: any }): any {
+    const [showPassword, setShowPassword] = useState(false)
+
+    return (
+      <div className="relative w-full">
+        <Input
+          id={placeholder}
+          type={showPassword ? "text" : "password"}
+          value={password}
+          onChange={(e: any) => setPassword(e.target.value)}
+          placeholder={placeholder}
+          required
+          className="pr-10"
+        />
+
+        <button
+          type="button"
+          onClick={() => setShowPassword((value) => !value)}
+          aria-label={
+            showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
+          }
+          className="absolute right-3 top-1/2 -translate-y-1/2 z-10 text-gray-500 hover:text-gray-700"
+        >
+          {showPassword ? <Eye className="cursor-pointer" size={18} /> : <EyeClosed className="cursor-pointer" size={18} />}
+        </button>
+      </div>
+    )
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,24 +62,22 @@ const Register: React.FC = () => {
 
   return (
     <div className="flex flex-row justify-center">
-      <div className="flex gap-10 items-start">
+      <Card className="max-w-[24rem] py-0">
         <form
           onSubmit={handleSubmit}
-          className="w-[450px] p-10 rounded-[10px] text-white border-2 shadow-[0_4px_20px_rgba(0,0,0,0.5)]"
+          className="w-full max-w-[24rem] px-8 py-20 rounded-sm border-2"
           style={{
-            background: "linear-gradient(145deg,#262830)",
-            fontFamily: "Arial, sans-serif",
-            borderColor: "#9b5de5",
+            borderColor: "var(--main)",
           }}
         >
-          <h2 className="text-[28px] mb-8 text-center font-bold">
+          <h2 className="text-2xl mb-2 text-center font-bold">
             ¡ÚNETE AHORA!
           </h2>
 
-          <div className="bg-[#262830] p-[15px] rounded-[6px] mb-5">
+          <div className="bg-[var(--background)] p-4 mb-2">
             {/* TODO: Email (para recordar ubicación) */}
             <label>Email</label>
-            <p className="text-xs text-[#b0b0c0] mb-2">
+            <p className="text-xs dark:text-[#b0b0c0] mb-2">
               Necesitarás este email para conectarte en el futuro.
             </p>
 
@@ -65,99 +90,45 @@ const Register: React.FC = () => {
             />
           </div>
 
-          {/* TODO: Input contraseña (para recordar ubicación) */}
-
-          <div className="bg-[#262830] p-[15px] rounded-[6px] mb-5">
+          <div className="bg-[var(--background)] p-4 mb-2">
             <label>Contraseña</label>
-            <p className="text-xs text-[#b0b0c0] mb-2">
+            <p className="text-xs dark:text-[#b0b0c0] mb-2">
               Usa al menos 6 caracteres. Incluye letras, números y un carácter
               especial.
             </p>
 
-            <div className="relative w-full">
-              <Input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Contraseña"
-                required
-                className="pr-10"
-              />
+            {PasswordInput({ placeholder: "Contraseña", password, setPassword })}
 
-              <button
-                type="button"
-                onClick={() => setShowPassword((v) => !v)}
-                aria-label={
-                  showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
-                }
-                className="absolute right-3 top-1/2 -translate-y-1/2 z-10 text-gray-500 hover:text-gray-700"
-              >
-                {showPassword ? <FaEye size={18} /> : <FaEyeSlash size={18} />}
-              </button>
-            </div>
           </div>
 
-          {/* TODO: Input repetir contraseña (para recordar ubicación) */}
-          <div className="bg-[#262830] p-[15px] rounded-[6px] mb-5">
+
+
+          <div className="bg-[var(--background)] p-4 mb-2">
             <label>Repite contraseña</label>
             <p className="text-xs text-[#b0b0c0] mb-2">
               Por favor, repite la contraseña para confirmar.
             </p>
 
-            <div className="relative w-full">
-              <Input
-                id="confirmPassword"
-                type={showConfirmPassword ? "text" : "password"}
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Confirmar contraseña"
-                required
-                className="pr-10"
-              />
-
-              <button
-                type="button"
-                onClick={() => setShowConfirmPassword((v) => !v)}
-                aria-label={
-                  showConfirmPassword
-                    ? "Ocultar contraseña"
-                    : "Mostrar contraseña"
-                }
-                className="absolute right-3 top-1/2 -translate-y-1/2 z-10 text-gray-500 hover:text-gray-700"
-              >
-                {showConfirmPassword ? (
-                  <FaEye size={18} />
-                ) : (
-                  <FaEyeSlash size={18} />
-                )}
-              </button>
-            </div>
+            {PasswordInput({ placeholder: "Confirmar Contraseña", password: confirmPassword, setPassword: setConfirmPassword })}
           </div>
 
-          <div className="bg-[#262830] p-[15px] rounded-[6px] mb-5">
+          <div className="bg-[var(--background)] p-4 mb-2">
             <label className="flex items-center text-sm">
               <input
                 type="checkbox"
                 className="w-auto mr-2"
                 checked={acceptTerms}
                 onChange={(e) => setAcceptTerms(e.target.checked)}
-                required
-              />
+                required />
               Acepto Términos y Condiciones, Política de Privacidad y Cookies
             </label>
           </div>
 
-          <Button
-            type="submit"
-            className="block mx-auto px-26 text-base
-
-"
-          >
+          <Button type="submit" className="block w-full text-base">
             CREAR CUENTA
           </Button>
         </form>
-      </div>
+      </Card>
     </div>
   );
 };
