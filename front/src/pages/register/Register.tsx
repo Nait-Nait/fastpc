@@ -75,7 +75,6 @@ const Register: React.FC = () => {
           </h2>
 
           <div className="bg-[var(--background)] p-4 mb-2">
-            {/* TODO: Email (para recordar ubicación) */}
             <label>Email</label>
             <p className="text-xs dark:text-[#b0b0c0] mb-2">
               Necesitarás este email para conectarte en el futuro.
