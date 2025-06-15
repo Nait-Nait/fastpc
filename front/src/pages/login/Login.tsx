@@ -94,7 +94,7 @@ const Login: React.FC = () => {
           </div>
         </div>
 
-        <Button type="submit" className="mt-7 mb-5">
+        <Button type="submit" className="mt-7 mb-5 px-26 text-base">
           INICIAR SESIÓN
         </Button>
 
