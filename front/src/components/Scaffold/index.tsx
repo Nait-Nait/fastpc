@@ -1,3 +1,4 @@
+import FooterPage from "../Footer";
 import NavigationMenuDemo from "../Header";
 
 interface ScaffoldProps {
@@ -9,6 +10,7 @@ export default function Scaffold({ children }: ScaffoldProps) {
     <div className="max-w-7xl mx-auto">
       <NavigationMenuDemo />
       {children}
+      <FooterPage />
     </div>
   );
 }

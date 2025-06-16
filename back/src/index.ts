@@ -22,14 +22,14 @@ AppDataSource.initialize().then(async () => {
     RepoHolder.setInstance(new ComponentRepositoryImpl());
 
 
-    const port:number = Number(process.env.PORT ?? 8888);
+    const port: number = Number(process.env.PORT ?? 8888);
 
     const server = fastify()
     await server.register(cors, {
-    origin: (origin, cb) => {
-    	cb(null, true)
-    	return
-	}
+        origin: (origin, cb) => {
+            cb(null, true)
+            return
+        }
     })
     await server.register(fastifyJwt, {
         secret: "supersecret",
@@ -44,7 +44,7 @@ AppDataSource.initialize().then(async () => {
     server.register(ProductRoutes, { prefix: '/api/v1/products' });
 
     server.get("/ping", async (request, reply) => {
-        reply.send({text:"Pong!"});
+        reply.send({ text: "Pong!" });
     })
 
 

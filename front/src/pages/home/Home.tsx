@@ -6,7 +6,7 @@ export default function Home() {
       <div className="flex flex-row justify-center w-full pb-10">
         <div className="flex flex-col gap-4 text-center">
           <h1 className="text-3xl">
-            Componentes Mas <span className="">Buscados</span>{" "}
+            Componentes Mas <span className="relative px-2 sm:mr-2 mr-0 md:[&_svg]:size-[45px] sm:[&_svg]:size-7 bg-main/50 rounded-base border-2 border-border/40 dark:border-border/70">Buscados</span>{" "}
             {/* bg-orange-300 text-gray-800 */}
           </h1>
         </div>

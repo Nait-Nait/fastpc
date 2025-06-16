@@ -71,7 +71,7 @@ export default function NavigationMenuDemo() {
   }, []);
 
   return (
-    <header className="flex flex-row space-x-10 bg-transparent w-full pt-4 mb-10 border-b-2 border-[var(--main)]">
+    <header className="flex flex-row space-x-10 bg-transparent w-full pt-4 mb-10 pb-5 border-b-2 border-[var(--main)]">
       <div>
         <a href="/" className="text-3xl font-bold ps-24 md:block hidden ">
           FitMyRig

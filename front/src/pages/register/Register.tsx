@@ -139,7 +139,7 @@ const Register: React.FC = () => {
             </label>
           </div>
 
-          <Button type="submit" className="block text-base px-21 mx-auto">
+          <Button type="submit" className="w-full text-base">
             CREAR CUENTA
           </Button>
         </form>
