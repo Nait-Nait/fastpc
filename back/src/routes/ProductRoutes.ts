@@ -46,6 +46,10 @@ async function ProductRoutes(fastify: FastifyInstance, opts: FastifyPluginOption
 
             const dbResult = await dbManager.getRepository(categoryComp as any).findOneBy({id: componentId})
 
+            if (!dbResult) {
+                reply.send({status: "bruh", text: "El componentId no esta en la base de datos"})
+            }
+
             const results = await compoRepo.scrapeProduct(dbResult as Component)
 
             reply.send(results)

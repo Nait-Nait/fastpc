@@ -29,7 +29,7 @@ async function componentsRoutes(fastify: FastifyInstance, opts: FastifyPluginOpt
 
     fastify.post("/addgpu", async (request, reply) => {
         const compoRepo = RepoHolder.getInstance();
-        const {name, benchmarkscore, vram } = (request.body as any)
+        const { name, benchmarkscore, vram } = (request.body as any)
         if (!name || !benchmarkscore || !vram) {
             reply.send({ status: "bruh", text: "Faltan parametros" })
         }
@@ -37,21 +37,33 @@ async function componentsRoutes(fastify: FastifyInstance, opts: FastifyPluginOpt
         const component = new GPUComponent(name, benchmarkscore, vram);
         await compoRepo.saveComponents([component], Category.GPU);
 
-        reply.send({status: "OK"})
+        reply.send({ status: "OK" })
 
     })
 
     fastify.post("/addcpu", async (request, reply) => {
         const compoRepo = RepoHolder.getInstance();
-        const {name, benchmarkscore, frecuency, cores, threads, socket, tdp, hyperthreading } = (request.body as any)
-        if (!name || !benchmarkscore || !frecuency || !cores || !threads || !socket || !tdp || !hyperthreading ) {
+        const body = request.body;
+        console.log(body)
+        const { name, benchmarkscore, frecuency, cores, threads, socket, tdp, hyperthreading } = (body as any)
+
+        if (
+            name === undefined ||
+            benchmarkscore === undefined ||
+            frecuency === undefined ||
+            cores === undefined ||
+            threads === undefined ||
+            socket === undefined ||
+            tdp === undefined ||
+            hyperthreading === undefined
+        ) {
             reply.send({ status: "bruh", text: "Faltan parametros" })
         }
 
         const component = new CPUComponent(name, benchmarkscore, frecuency, cores, threads, socket, tdp, hyperthreading);
         await compoRepo.saveComponents([component], Category.CPU);
 
-        reply.send({status: "OK"})
+        reply.send({ status: "OK" })
 
     })
 }
