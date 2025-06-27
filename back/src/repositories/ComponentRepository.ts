@@ -10,7 +10,7 @@ export interface ComponentRepository {
     scrapeProduct(component: Component): Promise<Product[] | null>
     scrapeProductCategory(category: Category): Promise<Product[] | null>
     saveProducts(products: Product[], category: Category): Promise<void>
-    getSavedComponents(category: Category): Promise<Component[]>
+    getSavedComponents(category: Category, page: number): Promise<Component[]>
     saveComponents(components: Component[], category: Category): Promise<void>
 }
 
@@ -34,23 +34,44 @@ export class ComponentRepositoryImpl implements ComponentRepository {
 
     async scrapeProduct(component: Component): Promise<Product[]> {
         let products: Product[] = []
-
-        const winpyProduct = await this.winpySource.findByName(component.name)
-
-        const winpyResults = winpyProduct.filter((value) => value.name.toLocaleLowerCase().includes(component.name.toLocaleLowerCase()))
+        let category: Category
 
         if (component instanceof GPUComponent) {
-            winpyResults.forEach((value) => {
-                const product = new GPUProduct(value.name, value.price, Store.Winpy, component.id)
-                products.push(product)
-            })
-
+            category = Category.GPU
         } else if (component instanceof CPUComponent) {
-            winpyResults.forEach((value) => {
-                const product = new CPUProduct(value.name, value.price, Store.Winpy, component.id)
-                products.push(product)
-            })
-        } else { throw Error("not implemented component") } // etc....
+            category = Category.CPU
+        } else { throw Error("not implemented component") }
+
+        // obtener productos de la db
+        const alreadySavedProducts = await this.getSavedProducts(component.id, category)
+
+        if (alreadySavedProducts.length > 0) {
+            products = alreadySavedProducts
+
+        } else {
+            const winpyProduct = await this.winpySource.findByName(component.name)
+
+            const winpyResults = winpyProduct.filter((value) => value.name.toLocaleLowerCase().includes(component.name.toLocaleLowerCase()))
+
+            if (category == Category.GPU) {
+                winpyResults.forEach((value) => {
+                    const product = new GPUProduct(value.name, value.price, Store.Winpy, component.id)
+                    products.push(product)
+                })
+
+            } else if (category == Category.CPU) {
+                winpyResults.forEach((value) => {
+                    const product = new CPUProduct(value.name, value.price, Store.Winpy, component.id)
+                    products.push(product)
+                })
+            } else { throw Error("not implemented component") } // etc....
+
+            try {
+                await this.saveProducts(products, category)
+            } catch (e) {
+                throw Error(`error al guardar los productos en la db: ${e}`)
+            }
+        }
 
         return products;
     }
@@ -76,14 +97,14 @@ export class ComponentRepositoryImpl implements ComponentRepository {
     }
 
     async saveProducts(products: Product[], category: Category): Promise<void> {
-        for (const product in products) {
+        for (const product of products) {
             const productType = this.productMap[category];
             // check if duplicate
             const dbDupResults = await this.dbManager.getRepository(productType).find(product as any)
 
             if (dbDupResults.length > 0) {
                 continue
-            }else {
+            } else {
                 this.dbManager.save(product)
             }
         }
@@ -95,18 +116,22 @@ export class ComponentRepositoryImpl implements ComponentRepository {
         if (productType === GPUProduct) {
             const results = await this.dbManager.getRepository(productType).find({ where: { gpuComponentId: componentId } });
             return results as GPUProduct[]
-        }else if (productType === CPUProduct) {
+        } else if (productType === CPUProduct) {
             const results = await this.dbManager.getRepository(productType).find({ where: { cpuComponentId: componentId } });
             return results as CPUProduct[]
-        }else {
+        } else {
             throw new Error("Tipo de componente no soportado");
         }
     }
 
-    async getSavedComponents(category: Category): Promise<Component[]> {
+    async getSavedComponents(category: Category, page: number): Promise<Component[]> {
+        const itemsPerPage = 5
         const componentType = this.componentMap[category];
 
-        return (await this.dbManager.getRepository(componentType).createQueryBuilder().getMany()) as (typeof componentType)[];
+        return (await this.dbManager.getRepository(componentType).find({
+            take: itemsPerPage,
+            skip: page * itemsPerPage
+        })) as (typeof componentType)[];
     }
 
     async saveComponents(components: Component[], category: Category): Promise<void> {
@@ -117,10 +142,10 @@ export class ComponentRepositoryImpl implements ComponentRepository {
             const dbDupResults = await this.dbManager
                 .getRepository(componentType)
                 .createQueryBuilder("comp")
-                .where("comp.name = :name", {name: component.name}).getOne()
+                .where("comp.name = :name", { name: component.name }).getOne()
             if (dbDupResults) {
                 continue
-            }else {
+            } else {
                 this.dbManager.save(component)
             }
         }

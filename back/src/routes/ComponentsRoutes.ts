@@ -2,6 +2,7 @@ import { FastifyInstance, FastifyPluginOptions } from 'fastify';
 import { RepoHolder } from '../singletons/RepoHolder';
 import { Category } from '../entities/ComponentCategories';
 import { CPUComponent, GPUComponent } from '../entities/Component';
+import { ScrapedComponent } from '../entities/ScrapedComponent';
 
 
 async function componentsRoutes(fastify: FastifyInstance, opts: FastifyPluginOptions) {
@@ -9,6 +10,7 @@ async function componentsRoutes(fastify: FastifyInstance, opts: FastifyPluginOpt
     fastify.get("/list", async (request, reply) => {
         const compoRepo = RepoHolder.getInstance();
         const category = (request.query as any).category
+        const page = (request.query as any).page ?? 0
         if (!category) {
             reply.send({ status: "bruh", text: "Especifica una categoria" })
         }
@@ -16,8 +18,16 @@ async function componentsRoutes(fastify: FastifyInstance, opts: FastifyPluginOpt
         const validCategories = Object.values(Category)
 
         if (Object.values(Category).includes(category)) {
-            const results = await compoRepo.getSavedComponents(category)
-            reply.send(results)
+            const results = await compoRepo.getSavedComponents(category, page)
+
+            const scrapedResults: ScrapedComponent[] = []
+            for (const value of results) {
+                const scrapedProducts = await compoRepo.scrapeProduct(value);
+                scrapedResults.push(new ScrapedComponent(value, scrapedProducts));
+            }
+
+            //reply.send(results)
+            reply.send(scrapedResults)
         } else {
             reply.send({
                 status: "bruh",

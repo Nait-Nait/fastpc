@@ -52,9 +52,10 @@ Lista los componentes guardados de una categoría específica.
 
 - Parámetros query:
   - ~category~ (string): Categoría del componente (ej: GPU, CPU)
+  - ~page~ (number): Numero de la pagina comenzando por 0
 
 - Respuestas:
-  - 200: Lista de componentes.
+  - 200: Lista de componentes junto a los productos scrapeados.
   - 400: Si la categoría es inválida o falta.
 
 ** /components/addgpu :: POST

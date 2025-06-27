@@ -75,10 +75,12 @@ export class WinpyComponentSource implements ComponentSource {
         if (!response.ok) {
             throw new Error(`Error: ${response.status} ${response.statusText}`);
         }
-        const results = (await response.json() as any).products;
+        const results: any[] = (await response.json() as any).products;
+
+        const filteredResults = results.filter((value) => value.category == WinpyProductCategory.PARTES_Y_PIEZAS)
 
         // TODO: make a function to resolve category
-        return results.map((value: any) => new WinpyProduct(value.name, value.price, WinpyProductCategory.DESCONOCIDO, value.instock, value.brand, value.description, value.rank))
+        return filteredResults.map((value: any) => new WinpyProduct(value.name, value.price, WinpyProductCategory.PARTES_Y_PIEZAS, value.instock, value.brand, value.description, value.rank))
     }
 
 
