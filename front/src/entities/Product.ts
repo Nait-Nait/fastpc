@@ -1,7 +1,4 @@
-import { Column, Entity, ForeignKey, PrimaryGeneratedColumn } from "typeorm";
 import { Store } from "./Store";
-import { CPUComponent, GPUComponent } from "./Component";
-
 
 export interface Product {
     name: string,
@@ -10,25 +7,17 @@ export interface Product {
     img: string
 }
 
-@Entity()
 export class GPUProduct implements Product {
-    @PrimaryGeneratedColumn()
     id:number;
-
-    @Column()
     name: string;
-    @Column()
     price: number;
-    @Column()
     store: Store;
-    @Column()
-    img: string;
+    img: string
 
-    @Column()
-    @ForeignKey<GPUComponent>("GPUComponent", "id")
     gpuComponentId:number
 
-    constructor(name: string, price: number, store: Store, img:string, gpuComponentId: number) {
+    constructor(id:number, name: string, price: number, store: Store, img:string, gpuComponentId: number) {
+        this.id = id;
         this.name = name;
         this.price = price;
         this.store = store;
@@ -37,25 +26,18 @@ export class GPUProduct implements Product {
     }
 }
 
-@Entity()
 export class CPUProduct implements Product {
-    @PrimaryGeneratedColumn()
     id:number;
 
-    @Column()
     name: string;
-    @Column()
     price: number;
-    @Column()
     store: Store;
-    @Column()
-    img: string;
+    img: string
 
-    @Column()
-    @ForeignKey<CPUComponent>("CPUComponent", "id")
     cpuComponentId:number
 
-    constructor(name: string, price: number, store: Store, img:string, cpuComponentId: number) {
+    constructor(id:number, name: string, price: number, store: Store, img:string, cpuComponentId: number) {
+        this.id = id;
         this.name = name;
         this.price = price;
         this.store = store;

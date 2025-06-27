@@ -8,7 +8,7 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 
-export default function CardComponent({name, description}: {name:string, description:string}) {
+export default function CardComponent({name, description, img}: {name:string, description:string, img: string}) {
     return (
         <Card className="w-full max-w-sm">
             <CardHeader>
@@ -18,7 +18,7 @@ export default function CardComponent({name, description}: {name:string, descrip
                 </CardDescription>
             </CardHeader>
             <CardContent>
-                
+                <img src={img}/>
             </CardContent>
             <CardFooter className="flex-col gap-2">
                 <Button type="submit" className="w-full">

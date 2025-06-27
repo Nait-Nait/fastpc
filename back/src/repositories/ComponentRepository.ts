@@ -56,13 +56,13 @@ export class ComponentRepositoryImpl implements ComponentRepository {
 
             if (category == Category.GPU) {
                 winpyResults.forEach((value) => {
-                    const product = new GPUProduct(value.name, value.price, Store.Winpy, component.id)
+                    const product = new GPUProduct(value.name, value.price, Store.Winpy, value.img, component.id)
                     products.push(product)
                 })
 
             } else if (category == Category.CPU) {
                 winpyResults.forEach((value) => {
-                    const product = new CPUProduct(value.name, value.price, Store.Winpy, component.id)
+                    const product = new CPUProduct(value.name, value.price, Store.Winpy, value.img, component.id)
                     products.push(product)
                 })
             } else { throw Error("not implemented component") } // etc....

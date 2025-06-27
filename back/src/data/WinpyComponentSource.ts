@@ -19,8 +19,9 @@ export class WinpyProduct implements Product {
     brand: string; // msi, asus
     description: string;
     rank: number; // rango que simboliza la importancia de mostrar este producto siendo 1 el mas importante
+    img: string;
 
-    constructor(name: string, price:number, category: WinpyProductCategory, stock:number, brand:string, description:string, rank:number) {
+    constructor(name: string, price:number, category: WinpyProductCategory, stock:number, brand:string, description:string, rank:number, img: string) {
         this.name = name;
         this.price = price;
         this.category = category;
@@ -28,6 +29,7 @@ export class WinpyProduct implements Product {
         this.brand = brand;
         this.description = description;
         this.rank = rank;
+        this.img =  img;
     }
 
 }
@@ -80,7 +82,7 @@ export class WinpyComponentSource implements ComponentSource {
         const filteredResults = results.filter((value) => value.category == WinpyProductCategory.PARTES_Y_PIEZAS)
 
         // TODO: make a function to resolve category
-        return filteredResults.map((value: any) => new WinpyProduct(value.name, value.price, WinpyProductCategory.PARTES_Y_PIEZAS, value.instock, value.brand, value.description, value.rank))
+        return filteredResults.map((value: any) => new WinpyProduct(value.name, value.price, WinpyProductCategory.PARTES_Y_PIEZAS, value.instock, value.brand, value.description, value.rank, value.image))
     }
 
 
