@@ -11,6 +11,7 @@ export interface ComponentRepository {
     scrapeProductCategory(category: Category): Promise<Product[] | null>
     saveProducts(products: Product[], category: Category): Promise<void>
     getSavedComponents(category: Category, page: number): Promise<Component[]>
+    getRandomComponents(category: Category, number: number): Promise<Component[]>
     saveComponents(components: Component[], category: Category): Promise<void>
 }
 
@@ -149,6 +150,13 @@ export class ComponentRepositoryImpl implements ComponentRepository {
                 this.dbManager.save(component)
             }
         }
+    }
+
+    async getRandomComponents(category: Category, number: number): Promise<Component[]> {
+        const componentType = this.componentMap[category];
+
+        return (await this.dbManager.getRepository(componentType).createQueryBuilder()
+            .select().orderBy('RANDOM()').take(number).getMany()) as (typeof componentType)[];
     }
 
 }

@@ -58,6 +58,17 @@ Lista los componentes guardados de una categoría específica.
   - 200: Lista de componentes junto a los productos scrapeados.
   - 400: Si la categoría es inválida o falta.
 
+** /components/random :: GET
+Retorna N componentes aleatorios.
+
+- Parámetros query:
+  - ~category~ (string): Categoría del componente (ej: GPU, CPU)
+  - ~number~ (number): Numero de componentes a retornar
+
+- Respuestas:
+  - 200: Lista de componentes junto a los productos scrapeados.
+  - 400: Si la categoría es inválida o falta.
+
 ** /components/addgpu :: POST
 Agrega un componente GPU.
 

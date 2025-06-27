@@ -37,6 +37,37 @@ async function componentsRoutes(fastify: FastifyInstance, opts: FastifyPluginOpt
 
     })
 
+
+    fastify.get("/random", async (request, reply) => {
+        const compoRepo = RepoHolder.getInstance();
+        const category = (request.query as any).category
+        const number = (request.query as any).page ?? 1
+        if (!category) {
+            reply.send({ status: "bruh", text: "Especifica una categoria" })
+        }
+
+        const validCategories = Object.values(Category)
+
+        if (Object.values(Category).includes(category)) {
+            const results = await compoRepo.getRandomComponents(category, number)
+
+            const scrapedResults: ScrapedComponent[] = []
+            for (const value of results) {
+                const scrapedProducts = await compoRepo.scrapeProduct(value);
+                scrapedResults.push(new ScrapedComponent(value, scrapedProducts));
+            }
+
+            //reply.send(results)
+            reply.send(scrapedResults)
+        } else {
+            reply.send({
+                status: "bruh",
+                text: "Categoría no válida, ej: " + Category.GPU,
+            });
+        }
+
+    })
+
     fastify.post("/addgpu", async (request, reply) => {
         const compoRepo = RepoHolder.getInstance();
         const { name, benchmarkscore, vram } = (request.body as any)
