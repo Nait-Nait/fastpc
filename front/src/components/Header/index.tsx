@@ -84,21 +84,15 @@ export default function NavigationMenuDemo() {
           placeholder="Buscar"
         />
         <div className="flex flex-row space-x-5">
-          <Button className="bg-[var(--secondary-background)] dark:text-white text-sm">
-            Categorias
-          </Button>
-          <Button className="bg-[var(--secondary-background)] dark:text-white">
-            Componentes
-          </Button>
-          <Button className="bg-[var(--secondary-background)] dark:text-white">
-            Arma tu PC
-          </Button>
+          <Button className="bg-[var(--foreground)] text-sm">Categorias</Button>
+          <Button className="bg-[var(--foreground)]">Componentes</Button>
+          <Button className="bg-[var(--main)]">Arma tu PC</Button>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Avatar className="cursor-pointer">
+              <Avatar className="cursor-pointer w-10 h-10">
                 <AvatarFallback>
-                  <UserCircle />
+                  <User />
                 </AvatarFallback>
               </Avatar>
             </DropdownMenuTrigger>
