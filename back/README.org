@@ -55,7 +55,7 @@ Lista los componentes guardados de una categoría específica.
   - ~page~ (number): Numero de la pagina comenzando por 0
 
 - Respuestas:
-  - 200: Lista de componentes junto a los productos scrapeados.
+  - 200: Objeto que contiene el total de paginas junto a los componentes.
   - 400: Si la categoría es inválida o falta.
 
 ** /components/random :: GET
