@@ -12,12 +12,15 @@ export interface ComponentRepository {
     saveProducts(products: Product[], category: Category): Promise<void>
     getSavedComponents(category: Category, page: number): Promise<Component[]>
     getRandomComponents(category: Category, number: number): Promise<Component[]>
+    getTotalPages(category: Category): Promise<number>
     saveComponents(components: Component[], category: Category): Promise<void>
 }
 
 export class ComponentRepositoryImpl implements ComponentRepository {
     dbManager = DBEntityManager.getInstance()
     winpySource = new WinpyComponentSource()
+
+    itemsPerPage = 5;
 
     componentMap = {
         [Category.GPU]: GPUComponent,
@@ -125,13 +128,17 @@ export class ComponentRepositoryImpl implements ComponentRepository {
         }
     }
 
+    async getTotalPages(category: Category): Promise<number> {
+        const componentType = this.componentMap[category];
+        return Math.ceil(await this.dbManager.getRepository(componentType).count() / this.itemsPerPage)
+    }
+
     async getSavedComponents(category: Category, page: number): Promise<Component[]> {
-        const itemsPerPage = 5
         const componentType = this.componentMap[category];
 
         return (await this.dbManager.getRepository(componentType).find({
-            take: itemsPerPage,
-            skip: page * itemsPerPage
+            take: this.itemsPerPage,
+            skip: page * this.itemsPerPage
         })) as (typeof componentType)[];
     }
 

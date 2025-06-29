@@ -27,7 +27,10 @@ async function componentsRoutes(fastify: FastifyInstance, opts: FastifyPluginOpt
             }
 
             //reply.send(results)
-            reply.send(scrapedResults)
+            reply.send({
+                totalPages: await compoRepo.getTotalPages(category),
+                results: scrapedResults
+            })
         } else {
             reply.send({
                 status: "bruh",

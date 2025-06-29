@@ -95,11 +95,7 @@ export default function NavigationMenuDemo() {
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Avatar className="cursor-pointer w-10 h-10">
-                <AvatarFallback>
-                  <User />
-                </AvatarFallback>
-              </Avatar>
+              <Button variant="reverse"><UserCircle/>Cuenta</Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-56">
               <DropdownMenuGroup>
