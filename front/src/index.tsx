@@ -1,18 +1,16 @@
 import * as React from "react";
-import { createRoot } from 'react-dom/client'
-import './global.css'
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
+import { createRoot } from "react-dom/client";
+import "./global.css";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import Home from "./pages/home/Home";
 import Scaffold from "./components/Scaffold";
 import Login from "./pages/login/Login";
 import Register from "./pages/register/Register";
+import Compatibility from "./pages/compatibility/Compatibility";
 
-const container = document.getElementById('root') as HTMLDivElement
-const root = createRoot(container)
+const container = document.getElementById("root") as HTMLDivElement;
+const root = createRoot(container);
 
 const router = createBrowserRouter([
   {
@@ -27,6 +25,10 @@ const router = createBrowserRouter([
     path: "/register",
     element: <Register />,
   },
+  {
+    path: "/compatibility",
+    element: <Compatibility />,
+  },
 ]);
 
 root.render(
@@ -35,4 +37,4 @@ root.render(
       <RouterProvider router={router} />
     </Scaffold>
   </React.StrictMode>
-)
+);

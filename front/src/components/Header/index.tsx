@@ -86,7 +86,12 @@ export default function NavigationMenuDemo() {
         <div className="flex flex-row space-x-5">
           <Button className="bg-[var(--foreground)] text-sm">Categorias</Button>
           <Button className="bg-[var(--foreground)]">Componentes</Button>
-          <Button className="bg-[var(--main)]">Arma tu PC</Button>
+          <Button
+            className="bg-[var(--main)]"
+            onClick={() => (window.location.href = "/compatibility")}
+          >
+            Arma tu PC
+          </Button>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
