@@ -38,14 +38,15 @@ const Comp: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col bg-[var(--background)] text-[var(--foreground)]">
       <div className="h-[70px] shrink-0" />
-      <h1 className="text-3xl font-bold text-center mb-10">
+
+      <h1 className="text-3xl font-bold text-center mb-1">
         Selecciona tus Componentes
       </h1>
-      <p className="text-sm text-center text-gray-400 mb-4">
+      <p className="text-sm text-center text-gray-400 mb-3">
         {active ? `Seleccionado: ${active}` : "Ningún componente seleccionado"}
       </p>
 
-      <div className="flex-1 flex justify-center items-center px-6 md:px-20">
+      <div className="flex flex-col justify-start items-center px-6 md:px-35 mt-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 max-w-[1200px] w-full">
           {icons.map(({ src, alt }, i) => (
             <Card
@@ -78,7 +79,7 @@ const Comp: React.FC = () => {
                       list.map((item) => (
                         <li
                           key={item}
-                          className="py-1.5 px-1 border-b border-[var(--border)] hover:bg-[var(--secondary-background)] rounded-md cursor-pointer transition-colors"
+                          className="py-1 px-1 border-b border-[var(--border)] hover:bg-[var(--secondary-background)] rounded-md cursor-pointer transition-colors"
                         >
                           {item}
                         </li>

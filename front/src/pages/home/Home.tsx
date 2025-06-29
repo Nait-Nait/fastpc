@@ -1,11 +1,16 @@
 import { useEffect, useState } from "react";
 import CardComponent from "@/components/Card";
-import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Category } from "@/entities/ComponentCategories";
 import { ScrapedComponent } from "@/entities/ScrapedComponent";
 import { ComponentRepositoryImpl } from "@/repositories/ComponentRepository";
-import { CPUComponent, GPUComponent } from "@/entities/Component";
+import { GPUComponent } from "@/entities/Component";
 
 function SkeletonCard() {
   return (
@@ -92,12 +97,17 @@ export default function Home() {
           <>
             <CardComponent
               key={component.component.name}
-              name={`${(component.component as GPUComponent).vram}`}
-              description={`precio: ${component.products[0] ? component.products[0].price : "Agotado"}`}
-              img={`${component.products[0] ? component.products[0].img : "https://create-react-app.dev/img/logo.svg"}`}
+              name={(component.component as GPUComponent).vram as any}
+              description={`precio: ${
+                component.products[0] ? component.products[0].price : "Agotado"
+              }`}
+              img={`${
+                component.products[0]
+                  ? component.products[0].img
+                  : "https://create-react-app.dev/img/logo.svg"
+              }`}
             />
           </>
-
         ))}
       </div>
     </div>
