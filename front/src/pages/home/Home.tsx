@@ -5,6 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Category } from "@/entities/ComponentCategories";
 import { ScrapedComponent } from "@/entities/ScrapedComponent";
 import { ComponentRepositoryImpl } from "@/repositories/ComponentRepository";
+import { CPUComponent, GPUComponent } from "@/entities/Component";
 
 function SkeletonCard() {
   return (
@@ -34,7 +35,7 @@ export default function Home() {
     componentRepo
       .list(Category.GPU, 0)
       .then((value) => {
-        setComponents(value);
+        setComponents(value.results);
         setLoading(false);
         console.log(value);
       })
@@ -87,11 +88,11 @@ export default function Home() {
         </div>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {components.map((component) => (
+        {components.slice(0, 7).map((component) => (
           <>
             <CardComponent
               key={component.component.name}
-              name={component.component.name}
+              name={`${(component.component as GPUComponent).vram}`}
               description={`precio: ${component.products[0] ? component.products[0].price : "Agotado"}`}
               img={`${component.products[0] ? component.products[0].img : "https://create-react-app.dev/img/logo.svg"}`}
             />

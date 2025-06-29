@@ -4,12 +4,12 @@ import { ScrapedComponent } from "@/entities/ScrapedComponent";
 
 
 export interface ComponentRepository {
-    list(category: Category, page: number): Promise<ScrapedComponent[]>;
+    list(category: Category, page: number): Promise<{ totalPages: number; results: ScrapedComponent[] }>;
     random(category: Category, number: number): Promise<ScrapedComponent[]>;
 }
 
 export class ComponentRepositoryImpl implements ComponentRepository {
-    async list(category: Category, page: number): Promise<ScrapedComponent[]> {
+    async list(category: Category, page: number): Promise<{ totalPages: number; results: ScrapedComponent[] }>{
         const response = await fetch(`${API_BASE_URL}/components/list?category=${category}&page=${page}`, {
             method: "GET",
             headers: {
