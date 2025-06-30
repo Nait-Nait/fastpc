@@ -19,6 +19,7 @@ async function componentsRoutes(fastify: FastifyInstance, opts: FastifyPluginOpt
 
         if (Object.values(Category).includes(category)) {
             const results = await compoRepo.getSavedComponents(category, page)
+            console.log(results)
 
             const scrapedResults: ScrapedComponent[] = []
             for (const value of results) {
@@ -162,11 +163,15 @@ async function componentsRoutes(fastify: FastifyInstance, opts: FastifyPluginOpt
         ) {
             reply.send({ status: "bruh", text: "Faltan parametros" })
         }
+        try {
+            const component = new CPUComponent(name, benchmarkscore, frecuency, cores, threads, socket, tdp, hyperthreading);
+            await compoRepo.saveComponents([component], Category.CPU);
 
-        const component = new CPUComponent(name, benchmarkscore, frecuency, cores, threads, socket, tdp, hyperthreading);
-        await compoRepo.saveComponents([component], Category.CPU);
+            reply.send({ status: "OK" })
+        }catch(e) {
+            reply.send({status:"nook"})
+        }
 
-        reply.send({ status: "OK" })
 
     })
 }
