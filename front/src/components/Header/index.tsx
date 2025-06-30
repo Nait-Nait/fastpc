@@ -86,7 +86,7 @@ export default function NavigationMenuDemo() {
               const inputValue = (e.target as HTMLInputElement).value;
 
               const params = new URLSearchParams(window.location.search);
-              params.set("page", "0") // resetear la pagina
+              params.set("page", "0"); // resetear la pagina
               params.set("search", inputValue);
 
               window.location.href = `/components?${params.toString()}`;
@@ -100,7 +100,9 @@ export default function NavigationMenuDemo() {
           <Button
             className="bg-[var(--foreground)]"
             onClick={() => (window.location.href = "/components")}
-          >Componentes</Button>
+          >
+            Componentes
+          </Button>
           <Button
             className="bg-[var(--main)]"
             onClick={() => (window.location.href = "/compatibility")}
@@ -110,7 +112,13 @@ export default function NavigationMenuDemo() {
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button><UserCircle />Cuenta</Button>
+              <Button
+                className="shadow-[var(--shadow-inverted)]"
+                variant="inverted"
+              >
+                <UserCircle />
+                Cuenta
+              </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-56">
               <DropdownMenuGroup>
