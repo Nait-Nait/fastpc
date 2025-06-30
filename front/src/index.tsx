@@ -9,6 +9,7 @@ import Login from "./pages/login/Login";
 import Register from "./pages/register/Register";
 import Components from "./pages/components/Components";
 import Compatibility from "./pages/compatibility/Compatibility";
+import { CotizacionProvider } from "./hooks/useCotizacionCookie";
 
 const container = document.getElementById("root") as HTMLDivElement;
 const root = createRoot(container);
@@ -38,8 +39,10 @@ const router = createBrowserRouter([
 
 root.render(
   <React.StrictMode>
-    <Scaffold>
-      <RouterProvider router={router} />
-    </Scaffold>
+    <CotizacionProvider>
+      <Scaffold>
+        <RouterProvider router={router} />
+      </Scaffold>
+    </CotizacionProvider>
   </React.StrictMode>
 );

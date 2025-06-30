@@ -1,3 +1,4 @@
+import Cookies from "js-cookie";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
@@ -7,32 +8,21 @@ import { ScrapedComponent } from "@/entities/ScrapedComponent";
 import { ComponentRepositoryImpl } from "@/repositories/ComponentRepository";
 import { useEffect, useState } from "react"
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
-
-const ImageWithShimer = ({ src }: { src: string }) => {
-    const [thumbnailLoading, setThumbnailLoading] = useState(true);
-    return (
-        <>
-            <div
-                className={`${thumbnailLoading ? " block " : " hidden "
-                    } w-full h-full bg-zinc-300 animate-pulse`}
-            ></div>
-            <img
-                src={src}
-                alt=""
-                className={`bg-white w-full h-full object-contain transition-opacity duration-500 ${thumbnailLoading ? " opacity-0 " : "opacity-100"
-                    }`}
-                onLoad={() => setThumbnailLoading(false)}
-            />
-        </>
-    );
-};
-
+import ImageWithShimer from "@/components/ImageWithShimer";
+import { useCotizacion } from "@/hooks/useCotizacionCookie";
 
 
 function ComponentCard({ component, category }: { component: ScrapedComponent, category: Category }) {
 
     const agotado = component.products.length == 0
     const producto = component.products[0] ?? null
+
+    const { cotizacion, addCotizacion, removeCotizacion } = useCotizacion();
+
+    const enCotizacion = cotizacion.some((item) =>
+        item.id === component.component.id && item.category === category
+    );
+
 
     return (
         <div className="border border-black overflow-hidden  rounded-base mb-3 flex h-[26rem] w-80 flex-col  lg:h-[11.25rem] lg:w-200 lg:flex-row  ">
@@ -54,7 +44,7 @@ function ComponentCard({ component, category }: { component: ScrapedComponent, c
                             .filter(([key]) => key !== 'name' && key !== 'id')
                             .map(([key, value]) => (
                                 <p key={key}>
-                                    <span className="font-semibold capitalize">{key}:</span> {String(value)}
+                                    <span className="font-semibold w-fit capitalize">{key}:</span> {String(value)}
                                 </p>
                             ))}
                         {Object.keys(component.component).length > 4 && (
@@ -65,12 +55,32 @@ function ComponentCard({ component, category }: { component: ScrapedComponent, c
                     </div>
                 </div>
 
-                <div className="flex flex-row gap-4 justify-center items-center w-max mb-5">
-                    <div>
-                        <Button onClick={() => window.location.href = `/components/component?category=${category}&id=${component.component.id}`} >
-                            Ver Detalles
-                        </Button>
-                    </div>
+                <div className="flex flex-col lg:flex-row gap-4 justify-center items-center w-max mb-5">
+                    {!agotado && (<>
+                        <div>
+                            <Button onClick={() => window.location.href = `/components/component?category=${category}&id=${component.component.id}`} >
+                                Ver Detalles
+                            </Button>
+                        </div>
+                        {!enCotizacion && (<div>
+                            <Button onClick={() => {
+                                addCotizacion({ id: component.component.id, category })
+                            }} >
+                                Añadir a Cotización
+                            </Button>
+                        </div>)}
+
+                        {enCotizacion && (<div>
+                            <Button onClick={() => {
+                                removeCotizacion({ id: component.component.id, category })
+                            }} >
+                                Eliminar de Cotización
+                            </Button>
+                        </div>)}
+
+                    </>
+                    )}
+
                     <div className="border-2 p-1 bg-[var(--main)] rounded-base">
                         {agotado && (
                             <p className="font-publicSans line-through">
@@ -128,29 +138,45 @@ export default function Components() {
 
     useEffect(() => {
         setLoading(true)
+        if (search) {
+            const componentRepo = new ComponentRepositoryImpl();
+            componentRepo
+                .search(category, search)
+                .then((value) => {
+                    setComponents(value.results);
+                    setTotalPages(0)
+                    setLoading(false);
+                    console.log(value);
+                })
+                .catch(() => {
+                    setError(true);
+                    setLoading(false);
+                });
+        } else {
+            const componentRepo = new ComponentRepositoryImpl();
+            componentRepo
+                .list(category, page)
+                .then((value) => {
+                    setComponents(value.results);
+                    setTotalPages(value.totalPages)
+                    setLoading(false);
+                    console.log(value);
+                })
+                .catch(() => {
+                    setError(true);
+                    setLoading(false);
+                });
+        }
 
-        const componentRepo = new ComponentRepositoryImpl();
-        componentRepo
-            .list(category, page)
-            .then((value) => {
-                setComponents(value.results);
-                setTotalPages(value.totalPages)
-                setLoading(false);
-                console.log(value);
-            })
-            .catch(() => {
-                setError(true);
-                setLoading(false);
-            });
     }, [category, page]);
 
-    /*if (error) {
+    if (error) {
         return (
             <div className="flex justify-center items-center">
                 <h1>Error al obtener los componentes</h1>
             </div>
         );
-    } */
+    }
 
     if (loading) {
         return (<h1>CARGANDO...</h1>)
