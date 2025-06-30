@@ -3,7 +3,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { Category } from "@/entities/ComponentCategories";
 
-type CotizacionItem = { id: number; category: Category };
+export type CotizacionItem = { id: number; category: Category };
 
 interface CotizacionContextType {
     cotizacion: CotizacionItem[];
