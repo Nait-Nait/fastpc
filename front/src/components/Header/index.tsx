@@ -96,7 +96,15 @@ export default function NavigationMenuDemo() {
         />
 
         <div className="flex flex-row space-x-5">
-          <Button className="bg-[var(--foreground)] text-sm">Categorias</Button>
+          <Button
+            className="bg-[var(--foreground)] text-sm"
+            onClick={() => {
+              if (logeado) {window.location.href = "/price"}
+              else {window.location.href = "/login"}
+            }}
+          >
+            Cotización
+          </Button>
           <Button
             className="bg-[var(--foreground)]"
             onClick={() => (window.location.href = "/components")}
