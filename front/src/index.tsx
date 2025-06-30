@@ -10,6 +10,7 @@ import Register from "./pages/register/Register";
 import Components from "./pages/components/Components";
 import Compatibility from "./pages/compatibility/Compatibility";
 import { CotizacionProvider } from "./hooks/useCotizacionCookie";
+import Details from "./pages/details/Details";
 
 const container = document.getElementById("root") as HTMLDivElement;
 const root = createRoot(container);
@@ -34,6 +35,10 @@ const router = createBrowserRouter([
   {
     path: "/components",
     element: <Components />
+  },
+    {
+    path: "/components/component",
+    element: <Details />
   }
 ]);
 
