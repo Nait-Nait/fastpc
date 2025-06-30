@@ -205,11 +205,11 @@ const Comp: React.FC = () => {
 
       {/* TARJETAS DE CATEGORÍAS */}
       <div className="flex flex-col justify-start items-center px-6 md:px-35 mt-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 max-w-[1200px] w-full">
+        <div className="pb-16 grid justify-items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-[900px] w-full">
           {icons.map(({ src, alt }, i) => (
             <Card
               key={i}
-              className={`aspect-[3.8/3] cursor-pointer transition-transform duration-300 hover:-translate-y-1 ${
+              className={`w-60 h-63 cursor-pointer transition-transform duration-300 hover:-translate-y-1 ${
                 active === alt
                   ? "ring-2 ring-[var(--main)] ring-offset-2 ring-offset-[var(--background)] bg-[var(--background)]"
                   : "border border-[var(--border)] shadow-[var(--shadow-big)] bg-[var(--foreground)]"
@@ -315,6 +315,10 @@ const Comp: React.FC = () => {
                     alt={alt}
                     className="w-4/7 h-auto object-contain filter brightness-[1.2] grayscale transition-transform duration-200 hover:scale-105"
                   />
+
+                  <span className="mt-3 text-[1.02rem] font-semibold text-[var(--secondary-background)] tracking-tight opacity-95">
+                    {alt}
+                  </span>
                 </CardContent>
               )}
             </Card>
