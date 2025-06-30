@@ -16,6 +16,7 @@
   --ring: oklch(0% 0 0);
   --overlay: oklch(0% 0 0 / 0.8);
   --shadow: 4px 4px 0px 0px var(--border);
+  --shadow-big: 0 20px 60px 0 var(--border); /* En dark mode */
   --chart-1: #ff7a05;
   --chart-2: #0099ff;
   --chart-3: #ffbf00;
@@ -33,6 +34,8 @@
   --border: #111111;
   --ring: #fff;
   --shadow: 4px 4px 0px 0px var(--border);
+  --shadow-inverted: -4px 4px 0px 0px var(--border); /* En dark mode */
+  --shadow-big: -7px 7px 0px 0px var(--border);
   --chart-1: #670e0f;
   --chart-2: #9b5de5;
   --chart-3: 30 80% 55%;
@@ -96,4 +99,12 @@
       transform: scale(1);
     }
   }
+}
+
+.shadow-big {
+  box-shadow: var(--shadow-big);
+}
+
+.shadow-medium {
+  box-shadow: var(--shadow-inverted);
 }
