@@ -6,6 +6,10 @@ import ramIcon from "../../assets/icons/ram.svg";
 import ssdIcon from "../../assets/icons/SSD.svg";
 import psuIcon from "../../assets/icons/psu.svg";
 import { Card, CardContent } from "@/components/ui/card";
+import { useEffect } from "react";
+import { ComponentRepositoryImpl } from "@/repositories/ComponentRepository";
+import { Category } from "@/entities/ComponentCategories";
+import { ScrapedComponent } from "@/entities/ScrapedComponent";
 
 // ---------- TYPES ----------
 type ComponentDetail = Record<string, string | number>;
@@ -140,6 +144,52 @@ const Comp: React.FC = () => {
   >({});
   const [detail, setDetail] = useState<DetailState>(null);
 
+  // Estados para componentes CPU y GPU
+  const [cpuComponents, setCpuComponents] = useState<ScrapedComponent[]>([]);
+  const [loadingCPUs, setLoadingCPUs] = useState(false);
+  const [errorCPUs, setErrorCPUs] = useState(false);
+
+  const [gpuComponents, setGpuComponents] = useState<ScrapedComponent[]>([]);
+  const [loadingGPUs, setLoadingGPUs] = useState(false);
+  const [errorGPUs, setErrorGPUs] = useState(false);
+
+  useEffect(() => {
+    if (active === "Grafica") {
+      setLoadingGPUs(true);
+      const repo = new ComponentRepositoryImpl();
+      repo
+        .list(Category.GPU, 0)
+        .then((res) => {
+          setGpuComponents(res.results);
+          setLoadingGPUs(false);
+        })
+        .catch(() => {
+          setErrorGPUs(true);
+          setLoadingGPUs(false);
+        });
+    }
+    // else setGpuComponents([]);
+  }, [active]);
+
+  useEffect(() => {
+    if (active === "CPU") {
+      setLoadingCPUs(true);
+      const repo = new ComponentRepositoryImpl();
+      repo
+        .list(Category.CPU, 0)
+        .then((res) => {
+          setCpuComponents(res.results);
+          setLoadingCPUs(false);
+        })
+        .catch(() => {
+          setErrorCPUs(true);
+          setLoadingCPUs(false);
+        });
+    }
+    // Opcional: Si cambias de categoría, limpia CPUs
+    // else setCpuComponents([]);
+  }, [active]);
+
   const currentDetail =
     detail &&
     detailsMap[detail.category] &&
@@ -147,11 +197,21 @@ const Comp: React.FC = () => {
       ? detailsMap[detail.category][detail.item]
       : null;
 
-  const list = active
-    ? catalog[active]?.filter((item) =>
+  let list: any[] = [];
+  if (active === "CPU") {
+    list = cpuComponents.filter((item) =>
+      item.component.name.toLowerCase().includes(query.toLowerCase())
+    );
+  } else if (active === "Grafica") {
+    list = gpuComponents.filter((item) =>
+      item.component.name.toLowerCase().includes(query.toLowerCase())
+    );
+  } else if (active) {
+    list =
+      catalog[active]?.filter((item) =>
         item.toLowerCase().includes(query.toLowerCase())
-      ) ?? []
-    : [];
+      ) ?? [];
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-[var(--background)] text-[var(--foreground)]">
@@ -209,7 +269,7 @@ const Comp: React.FC = () => {
           {icons.map(({ src, alt }, i) => (
             <Card
               key={i}
-              className={`w-60 h-63 cursor-pointer transition-transform duration-300 hover:-translate-y-1 ${
+              className={`w-66 h-63 cursor-pointer transition-transform duration-300 hover:-translate-y-1 ${
                 active === alt
                   ? "ring-2 ring-[var(--main)] ring-offset-2 ring-offset-[var(--background)] bg-[var(--background)]"
                   : "border border-[var(--border)] shadow-[var(--shadow-big)] bg-[var(--foreground)]"
@@ -274,8 +334,73 @@ const Comp: React.FC = () => {
                       autoFocus
                     />
 
-                    <ul className="bg-[var(--background)]/80 backdrop-blur-md rounded-xl p-2 shadow-inner max-h-40 overflow-y-auto">
-                      {list.length > 0 ? (
+                    {/* ----------- LISTADO FILTRADO ----------- */}
+                    <ul className="bg-[var(--background)]/80 backdrop-blur-md rounded-xl p-2 shadow-inner">
+                      {active === "CPU" ? (
+                        loadingCPUs ? (
+                          <li>Cargando...</li>
+                        ) : errorCPUs ? (
+                          <li>Error al cargar CPUs</li>
+                        ) : list.length > 0 ? (
+                          list.map((item) => (
+                            <li
+                              key={item.component.id}
+                              className="py-0.15 px-1 hover:bg-[var(--secondary-background)] rounded-md cursor-pointer transition-colors"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedComponents((prev) => ({
+                                  ...prev,
+                                  CPU: item.component.name,
+                                }));
+                                setDetail({
+                                  category: "CPU",
+                                  item: item.component.name,
+                                });
+                              }}
+                            >
+                              <span className="font-bold">
+                                {item.component.name}
+                              </span>
+                            </li>
+                          ))
+                        ) : (
+                          <li className="text-center text-gray-500">
+                            No hay resultados
+                          </li>
+                        )
+                      ) : active === "Grafica" ? (
+                        loadingGPUs ? (
+                          <li>Cargando...</li>
+                        ) : errorGPUs ? (
+                          <li>Error al cargar GPUs</li>
+                        ) : list.length > 0 ? (
+                          list.map((item) => (
+                            <li
+                              key={item.component.id}
+                              className="py-0.15 px-1 hover:bg-[var(--secondary-background)] rounded-md cursor-pointer transition-colors"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedComponents((prev) => ({
+                                  ...prev,
+                                  Grafica: item.component.name,
+                                }));
+                                setDetail({
+                                  category: "Grafica",
+                                  item: item.component.name,
+                                });
+                              }}
+                            >
+                              <span className="font-bold">
+                                {item.component.name}
+                              </span>
+                            </li>
+                          ))
+                        ) : (
+                          <li className="text-center text-gray-500">
+                            No hay resultados
+                          </li>
+                        )
+                      ) : list.length > 0 ? (
                         list.map((item) => (
                           <li
                             key={item}
