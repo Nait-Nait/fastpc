@@ -97,7 +97,8 @@ export default function Home() {
           <>
             <CardComponent
               key={component.component.name}
-              name={(component.component as GPUComponent).vram as any}
+              name={component.component.name}
+              onClick={() => window.location.href = `/components/component?category=${Category.GPU}&id=${component.component.id}`}
               description={`precio: ${
                 component.products[0] ? component.products[0].price : "Agotado"
               }`}

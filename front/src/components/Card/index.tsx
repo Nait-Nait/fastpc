@@ -8,9 +8,9 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 
-export default function CardComponent({name, description, img}: {name:string, description:string, img: string}) {
+export default function CardComponent({name, description, img, onClick}: {name:string, description:string, img: string, onClick: () => void}) {
     return (
-        <Card className="w-full max-w-sm">
+        <Card className="w-full max-w-sm" onClick={onClick} >
             <CardHeader>
                 <CardTitle>{name}</CardTitle>
                 <CardDescription>

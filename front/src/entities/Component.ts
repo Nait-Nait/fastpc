@@ -1,42 +1,166 @@
+
+export class ColumnNumericTransformer {
+    to(data: number): number {
+        return data;
+    }
+    from(data: string): number {
+        return parseFloat(data);
+    }
+}
+
 export interface Component {
     id: number,
     name: string,
 }
 
 export class GPUComponent implements Component {
+
     id: number;
     name: string;
-    benchmarkScore: number | null;
-    vram: number;
+    memory: string;
+    wattage: string;
 
-    constructor(id:number, name: string, benchmarkScore:number, vram:number) {
+    constructor(id: number, name: string, memory: string, wattage: string) {
         this.id = id;
         this.name = name;
-        this.benchmarkScore = benchmarkScore;
-        this.vram = vram;
+        this.memory = memory;
+        this.wattage = wattage;
     }
 }
 
 export class CPUComponent implements Component {
-    id: number;
-    name: string;
-    benchmarkScore: number;
-    frecuency: number;
-    cores: number;
-    threads: number;
-    socket: string;
-    tdp: number;
-    hyperthreading: boolean
 
-    constructor(id:number, name:string, benchmarkscore:number, frecuency:number, cores:number, threads:number, socket:string, tdp:number, hyperthreading:boolean ) {
+    id: number;
+
+    name: string;
+    cores: string;
+    clock: string;
+    socket: string;
+    tdp: string;
+    wattage: string;
+
+    constructor(id: number, name: string, cores: string, clock: string, socket: string, tdp: string, wattage: string) {
         this.id = id;
         this.name = name;
-        this.benchmarkScore = benchmarkscore;
-        this.frecuency = frecuency;
         this.cores = cores;
-        this.threads = threads;
+        this.clock = clock;
         this.socket = socket;
         this.tdp = tdp;
-        this.hyperthreading = hyperthreading;
+        this.wattage = wattage;
     }
+}
+
+export class RAMComponent implements Component {
+    id: number;
+
+    name: string;
+    brand: string;
+    capacity: string;
+    gen: string;
+    speed: string;
+    wattage: string;
+
+    constructor(id: number,name: string, brand: string, capacity: string, gen: string, speed: string, wattage: string) {
+        this.id = id;
+        this.name = name;
+        this.brand = brand;
+        this.capacity = capacity;
+        this.gen = gen;
+        this.speed = speed;
+        this.wattage = wattage;
+    }
+
+}
+
+export class PSUComponent implements Component {
+    id: number;
+
+    name: string;
+    manufacturer: string;
+    model: string;
+    efficiencyRating: string;
+    noiseRating: string;
+    wattage: string;
+
+    constructor(
+        id: number,
+        name: string,
+        manufacturer: string,
+        model: string,
+        efficiencyRating: string,
+        noiseRating: string,
+        wattage: string
+    ) {
+        this.id = id;
+        this.name = name,
+        this.manufacturer = manufacturer;
+        this.model = model;
+        this.efficiencyRating = efficiencyRating;
+        this.noiseRating = noiseRating;
+        this.wattage = wattage;
+    }
+}
+
+export class MotherboardComponent implements Component {
+    id: number;
+
+    name: string;
+    year: number;
+    socket: string;
+    chipset: string;
+    formFactor: string;
+    powerConsumption: string;
+    constructor(
+        id: number,
+        name: string,
+        year: number,
+        socket: string,
+        chipset: string,
+        formFactor: string,
+        powerConsumption: string
+    ) {
+        this.id = id;
+        this.name = name;
+        this.year = year;
+        this.socket = socket;
+        this.chipset = chipset;
+        this.formFactor = formFactor;
+        this.powerConsumption = powerConsumption;
+    }
+}
+
+
+export class SSDComponent implements Component {
+  id: number;
+
+  name: string;
+  capacity: string;
+  format: string;
+  interface: string;
+  released: string;
+  controller: string;
+  dram: string;
+  wattage: string;
+
+  constructor(
+    id: number,
+    name: string,
+    capacity: string,
+    format: string,
+    iface: string,
+    released: string,
+    controller: string,
+    dram: string,
+    wattage: string
+  ) {
+    this.id = id;
+    this.name = name;
+    this.capacity = capacity;
+    this.format = format;
+    this.interface = iface;
+    this.released = released;
+    this.controller = controller;
+    this.dram = dram;
+    this.wattage = wattage;
+  }
 }

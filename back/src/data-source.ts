@@ -1,7 +1,7 @@
 import "reflect-metadata"
 import { DataSource } from "typeorm"
-import {GPUComponent, CPUComponent} from "./entities/Component"
-import {CPUProduct, GPUProduct} from "./entities/Product"
+import { GPUComponent, CPUComponent, RAMComponent, PSUComponent, SSDComponent, MotherboardComponent } from "./entities/Component"
+import { CPUProduct, GPUProduct, MotherboardProduct, PSUProduct, RAMProduct, SSDProduct } from "./entities/Product"
 import { User } from "./entities/User"
 
 export const AppDataSource = new DataSource({
@@ -13,7 +13,15 @@ export const AppDataSource = new DataSource({
     database: "fastpc",
     synchronize: true,
     logging: false,
-    entities: [ GPUComponent, GPUProduct, CPUComponent, CPUProduct, User ],
+    entities: [
+        GPUComponent, GPUProduct,
+        CPUComponent, CPUProduct,
+        RAMComponent, RAMProduct,
+        PSUComponent, PSUProduct,
+        SSDComponent, SSDProduct,
+        MotherboardComponent, MotherboardProduct,
+        User
+    ],
     migrations: [],
     subscribers: [],
 })
