@@ -98,7 +98,7 @@ export default function NavigationMenuDemo() {
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="reverse"><UserCircle/>Cuenta</Button>
+              <Button><UserCircle/>Cuenta</Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-56">
               <DropdownMenuGroup>
