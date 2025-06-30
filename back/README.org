@@ -91,14 +91,15 @@ Busca componentes por nombre dentro de una categoría, y retorna los resultados 
   - 200: Lista de componentes coincidentes junto a sus productos scrapeados.
   - 400: Si la categoría o el texto de búsqueda son inválidos o faltan.
 
+* API de Componentes
 
 ** /components/addgpu :: POST
 Agrega un componente GPU.
 
 - Body JSON:
   - ~name~ (string)
-  - ~benchmarkscore~ (number)
-  - ~vram~ (number)
+  - ~memory~ (string)
+  - ~wattage~ (string)
 
 - Respuestas:
   - 200: GPU agregada correctamente.
@@ -109,16 +110,76 @@ Agrega un componente CPU.
 
 - Body JSON:
   - ~name~ (string)
-  - ~benchmarkscore~ (number)
-  - ~frecuency~ (number)
-  - ~cores~ (number)
-  - ~threads~ (number)
+  - ~cores~ (string)
+  - ~clock~ (string)
   - ~socket~ (string)
-  - ~tdp~ (number)
-  - ~hyperthreading~ (boolean)
+  - ~tdp~ (string)
+  - ~wattage~ (string)
 
 - Respuestas:
   - 200: CPU agregada correctamente.
+  - 400: Si faltan parámetros.
+
+** /components/addram :: POST
+Agrega un componente RAM.
+
+- Body JSON:
+  - ~name~ (string)
+  - ~brand~ (string)
+  - ~capacity~ (string)
+  - ~gen~ (string)
+  - ~speed~ (string)
+  - ~wattage~ (string)
+
+- Respuestas:
+  - 200: RAM agregada correctamente.
+  - 400: Si faltan parámetros.
+
+** /components/addpsu :: POST
+Agrega un componente PSU.
+
+- Body JSON:
+  - ~name~ (string)
+  - ~manufacturer~ (string)
+  - ~model~ (string)
+  - ~efficiencyRating~ (string)
+  - ~noiseRating~ (string)
+  - ~wattage~ (string)
+
+- Respuestas:
+  - 200: PSU agregada correctamente.
+  - 400: Si faltan parámetros.
+
+** /components/addmotherboard :: POST
+Agrega un componente Placa Madre.
+
+- Body JSON:
+  - ~name~ (string)
+  - ~year~ (number)
+  - ~socket~ (string)
+  - ~chipset~ (string)
+  - ~formFactor~ (string)
+  - ~powerConsumption~ (string)
+
+- Respuestas:
+  - 200: Motherboard agregada correctamente.
+  - 400: Si faltan parámetros.
+
+** /components/addssd :: POST
+Agrega un componente SSD.
+
+- Body JSON:
+  - ~name~ (string)
+  - ~capacity~ (string)
+  - ~format~ (string)
+  - ~interface~ (string)
+  - ~released~ (string)
+  - ~controller~ (string)
+  - ~dram~ (string)
+  - ~wattage~ (string)
+
+- Respuestas:
+  - 200: SSD agregada correctamente.
   - 400: Si faltan parámetros.
 
 * Ejemplos con curl

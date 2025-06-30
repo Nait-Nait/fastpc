@@ -1,7 +1,7 @@
 import { FastifyInstance, FastifyPluginOptions } from 'fastify';
 import { RepoHolder } from '../singletons/RepoHolder';
 import { Category } from '../entities/ComponentCategories';
-import { CPUComponent, GPUComponent } from '../entities/Component';
+import { CPUComponent, GPUComponent, MotherboardComponent, PSUComponent, RAMComponent, SSDComponent } from '../entities/Component';
 import { ScrapedComponent } from '../entities/ScrapedComponent';
 
 
@@ -133,47 +133,107 @@ async function componentsRoutes(fastify: FastifyInstance, opts: FastifyPluginOpt
 
     fastify.post("/addgpu", async (request, reply) => {
         const compoRepo = RepoHolder.getInstance();
-        const { name, benchmarkscore, vram } = (request.body as any)
-        if (!name || !benchmarkscore || !vram) {
-            reply.send({ status: "bruh", text: "Faltan parametros" })
+        const { name, memory, wattage } = request.body as any;
+
+        if (!name || !memory || !wattage) {
+            return reply.code(400).send({ status: "error", text: "Faltan parámetros" });
         }
 
-        const component = new GPUComponent(name, benchmarkscore, vram);
-        await compoRepo.saveComponents([component], Category.GPU);
-
-        reply.send({ status: "OK" })
-
-    })
+        try {
+            const component = new GPUComponent(name, memory, wattage);
+            await compoRepo.saveComponents([component], Category.GPU);
+            return reply.send({ status: "OK" });
+        } catch (error) {
+            return reply.code(500).send({ status: "error", text: "Error al guardar GPU" });
+        }
+    });
 
     fastify.post("/addcpu", async (request, reply) => {
         const compoRepo = RepoHolder.getInstance();
-        const body = request.body;
-        console.log(body)
-        const { name, benchmarkscore, frecuency, cores, threads, socket, tdp, hyperthreading } = (body as any)
+        const { name, cores, clock, socket, tdp, wattage } = request.body as any;
 
-        if (
-            name === undefined ||
-            benchmarkscore === undefined ||
-            frecuency === undefined ||
-            cores === undefined ||
-            threads === undefined ||
-            socket === undefined ||
-            tdp === undefined ||
-            hyperthreading === undefined
-        ) {
-            reply.send({ status: "bruh", text: "Faltan parametros" })
+        if (!name || !cores || !clock || !socket || !tdp || !wattage) {
+            return reply.code(400).send({ status: "error", text: "Faltan parámetros" });
         }
+
         try {
-            const component = new CPUComponent(name, benchmarkscore, frecuency, cores, threads, socket, tdp, hyperthreading);
+            const component = new CPUComponent(name, cores, clock, socket, tdp, wattage);
             await compoRepo.saveComponents([component], Category.CPU);
+            return reply.send({ status: "OK" });
+        } catch (error) {
+            return reply.code(500).send({ status: "error", text: "Error al guardar CPU" });
+        }
+    });
 
-            reply.send({ status: "OK" })
-        }catch(e) {
-            reply.send({status:"nook"})
+    fastify.post("/addram", async (request, reply) => {
+        const compoRepo = RepoHolder.getInstance();
+        const { name, brand, capacity, gen, speed, wattage } = request.body as any;
+
+        if (!name || !brand || !capacity || !gen || !speed || !wattage) {
+            return reply.code(400).send({ status: "error", text: "Faltan parámetros" });
         }
 
+        try {
+            const component = new RAMComponent(name, brand, capacity, gen, speed, wattage);
+            await compoRepo.saveComponents([component], Category.RAM);
+            return reply.send({ status: "OK" });
+        } catch (error) {
+            return reply.code(500).send({ status: "error", text: "Error al guardar RAM" });
+        }
+    });
 
-    })
+    fastify.post("/addpsu", async (request, reply) => {
+        const compoRepo = RepoHolder.getInstance();
+        const { name, manufacturer, model, efficiencyRating, noiseRating, wattage } = request.body as any;
+
+        if (!name || !manufacturer || !model || !efficiencyRating || !noiseRating || !wattage) {
+            return reply.code(400).send({ status: "error", text: "Faltan parámetros" });
+        }
+
+        try {
+            const component = new PSUComponent(name, manufacturer, model, efficiencyRating, noiseRating, wattage);
+            await compoRepo.saveComponents([component], Category.PSU);
+            return reply.send({ status: "OK" });
+        } catch (error) {
+            return reply.code(500).send({ status: "error", text: "Error al guardar PSU" });
+        }
+    });
+
+    fastify.post("/addmotherboard", async (request, reply) => {
+        const compoRepo = RepoHolder.getInstance();
+        const { name, year, socket, chipset, formFactor, powerConsumption } = request.body as any;
+
+        if (!name || year === undefined || !socket || !chipset || !formFactor || !powerConsumption) {
+            return reply.code(400).send({ status: "error", text: "Faltan parámetros" });
+        }
+
+        try {
+            const component = new MotherboardComponent(name, Number(year), socket, chipset, formFactor, powerConsumption);
+            await compoRepo.saveComponents([component], Category.MOTHERBOARD);
+            return reply.send({ status: "OK" });
+        } catch (error) {
+            return reply.code(500).send({ status: "error", text: "Error al guardar Motherboard" });
+        }
+    });
+
+    fastify.post("/addssd", async (request, reply) => {
+        const compoRepo = RepoHolder.getInstance();
+        const { name, capacity, format, interface: iface, released, controller, dram, wattage } = request.body as any;
+
+        if (!name || !capacity || !format || !iface || !released || !controller || !dram || !wattage) {
+            return reply.code(400).send({ status: "error", text: "Faltan parámetros" });
+        }
+
+        try {
+            const component = new SSDComponent(name, capacity, format, iface, released, controller, dram, wattage);
+            await compoRepo.saveComponents([component], Category.SSD);
+            return reply.send({ status: "OK" });
+        } catch (error) {
+            return reply.code(500).send({ status: "error", text: "Error al guardar SSD" });
+        }
+    });
+
+
 }
 
 export default componentsRoutes;

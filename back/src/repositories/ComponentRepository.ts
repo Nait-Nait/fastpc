@@ -1,7 +1,7 @@
 import { WinpyComponentSource } from "../data/WinpyComponentSource";
-import { Component, CPUComponent, GPUComponent } from "../entities/Component";
+import { Component, CPUComponent, GPUComponent, MotherboardComponent, PSUComponent, RAMComponent, SSDComponent } from "../entities/Component";
 import { Category } from "../entities/ComponentCategories";
-import { CPUProduct, GPUProduct, Product } from "../entities/Product";
+import { CPUProduct, GPUProduct, MotherboardProduct, Product, PSUProduct, RAMProduct, SSDProduct } from "../entities/Product";
 import { Store } from "../entities/Store";
 import { DBEntityManager } from "../singletons/DbEntityManager";
 
@@ -26,15 +26,23 @@ export class ComponentRepositoryImpl implements ComponentRepository {
 
     componentMap = {
         [Category.GPU]: GPUComponent,
-        [Category.CPU]: CPUComponent, // TODO: aadd missing categories
-    };
+        [Category.CPU]: CPUComponent,
+        [Category.RAM]: RAMComponent,
+        [Category.PSU]: PSUComponent,
+        [Category.MOTHERBOARD]: MotherboardComponent,
+        [Category.SSD]: SSDComponent
+    }
 
     productMap = {
         [Category.GPU]: GPUProduct,
-        [Category.CPU]: CPUProduct, // TODO: aadd missing categories
+        [Category.CPU]: CPUProduct,
+        [Category.RAM]: RAMProduct,
+        [Category.PSU]: PSUProduct,
+        [Category.MOTHERBOARD]: MotherboardProduct,
+        [Category.SSD]: SSDProduct
     };
 
-    getComponentCategory(category: Category): GPUComponent | CPUComponent {
+    getComponentCategory(category: Category): typeof GPUComponent | typeof CPUComponent | typeof RAMComponent | typeof PSUComponent | typeof MotherboardComponent | typeof SSDComponent {
         return this.componentMap[category]
     }
 
@@ -46,6 +54,14 @@ export class ComponentRepositoryImpl implements ComponentRepository {
             category = Category.GPU
         } else if (component instanceof CPUComponent) {
             category = Category.CPU
+        } else if (component instanceof RAMComponent) {
+            category = Category.RAM
+        } else if (component instanceof PSUComponent) {
+            category = Category.PSU
+        } else if (component instanceof MotherboardComponent) {
+            category = Category.MOTHERBOARD
+        } else if (component instanceof SSDComponent) {
+            category = Category.SSD
         } else { throw Error("not implemented component") }
 
         // obtener productos de la db
@@ -70,7 +86,28 @@ export class ComponentRepositoryImpl implements ComponentRepository {
                     const product = new CPUProduct(value.name, value.price, Store.Winpy, value.img, component.id)
                     products.push(product)
                 })
-            } else { throw Error("not implemented component") } // etc....
+            } else if (category == Category.RAM) {
+                winpyResults.forEach((value) => {
+                    const product = new RAMProduct(value.name, value.price, Store.Winpy, value.img, component.id)
+                    products.push(product)
+                })
+            } else if (category == Category.PSU) {
+                winpyResults.forEach((value) => {
+                    const product = new PSUProduct(value.name, value.price, Store.Winpy, value.img, component.id)
+                    products.push(product)
+                })
+            } else if (category == Category.MOTHERBOARD) {
+                winpyResults.forEach((value) => {
+                    const product = new MotherboardProduct(value.name, value.price, Store.Winpy, value.img, component.id)
+                    products.push(product)
+                })
+            } else if (category == Category.SSD) {
+                winpyResults.forEach((value) => {
+                    const product = new SSDProduct(value.name, value.price, Store.Winpy, value.img, component.id)
+                    products.push(product)
+                })
+            }
+            else { throw Error("not implemented component") } // etc....
 
             try {
                 await this.saveProducts(products, category)
@@ -141,7 +178,7 @@ export class ComponentRepositoryImpl implements ComponentRepository {
         return (await this.dbManager.getRepository(componentType).find({
             take: this.itemsPerPage,
             skip: page * this.itemsPerPage
-        })) as (typeof componentType)[];
+        }));
     }
 
     async saveComponents(components: Component[], category: Category): Promise<void> {
@@ -165,12 +202,12 @@ export class ComponentRepositoryImpl implements ComponentRepository {
         const componentType = this.componentMap[category];
 
         return (await this.dbManager.getRepository(componentType).createQueryBuilder()
-            .select().orderBy('RANDOM()').take(number).getMany()) as (typeof componentType)[];
+            .select().orderBy('RANDOM()').take(number).getMany());
     }
 
     async getComponent(id: number, category: Category): Promise<Component> {
         const componentType = this.componentMap[category];
-        const component = await this.dbManager.getRepository(componentType).findOne({ where: { id } }) as (typeof componentType);
+        const component = await this.dbManager.getRepository(componentType).findOne({ where: { id } });
 
         return component
     }

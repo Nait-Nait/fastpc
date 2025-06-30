@@ -1,6 +1,14 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 
+export class ColumnNumericTransformer {
+    to(data: number): number {
+        return data;
+    }
+    from(data: string): number {
+        return parseFloat(data);
+    }
+}
 
 export interface Component {
     id: number,
@@ -16,14 +24,14 @@ export class GPUComponent implements Component {
     @Column()
     name: string;
     @Column()
-    benchmarkScore: number | null;
+    memory: string;
     @Column()
-    vram: number;
+    wattage: string;
 
-    constructor(name: string, benchmarkScore:number, vram:number) {
+    constructor(name: string, memory: string, wattage: string) {
         this.name = name;
-        this.benchmarkScore = benchmarkScore;
-        this.vram = vram;
+        this.memory = memory;
+        this.wattage = wattage;
     }
 }
 
@@ -36,28 +44,164 @@ export class CPUComponent implements Component {
     @Column()
     name: string;
     @Column()
-    benchmarkScore: number;
+    cores: string;
     @Column()
-    frecuency: number;
-    @Column()
-    cores: number;
-    @Column()
-    threads: number;
+    clock: string;
     @Column()
     socket: string;
     @Column()
-    tdp: number;
+    tdp: string;
     @Column()
-    hyperthreading: boolean
+    wattage: string;
 
-    constructor(name:string, benchmarkscore:number, frecuency:number, cores:number, threads:number, socket:string, tdp:number, hyperthreading:boolean ) {
+    constructor(name: string, cores: string, clock: string, socket: string, tdp: string, wattage: string) {
         this.name = name;
-        this.benchmarkScore = benchmarkscore;
-        this.frecuency = frecuency;
         this.cores = cores;
-        this.threads = threads;
+        this.clock = clock;
         this.socket = socket;
         this.tdp = tdp;
-        this.hyperthreading = hyperthreading;
+        this.wattage = wattage;
     }
+}
+
+@Entity()
+export class RAMComponent implements Component {
+    @PrimaryGeneratedColumn()
+    id: number;
+
+    @Column()
+    name: string;
+    @Column()
+    brand: string;
+    @Column()
+    capacity: string;
+    @Column()
+    gen: string;
+    @Column()
+    speed: string;
+    @Column()
+    wattage: string;
+
+    constructor(name: string, brand: string, capacity: string, gen: string, speed: string, wattage: string) {
+        this.name = name;
+        this.brand = brand;
+        this.capacity = capacity;
+        this.gen = gen;
+        this.speed = speed;
+        this.wattage = wattage;
+    }
+
+}
+
+@Entity()
+export class PSUComponent implements Component {
+    @PrimaryGeneratedColumn()
+    id: number;
+
+    @Column()
+    name: string;
+    @Column()
+    manufacturer: string;
+    @Column()
+    model: string;
+    @Column()
+    efficiencyRating: string;
+    @Column()
+    noiseRating: string;
+    @Column()
+    wattage: string;
+
+    constructor(
+        name: string,
+        manufacturer: string,
+        model: string,
+        efficiencyRating: string,
+        noiseRating: string,
+        wattage: string
+    ) {
+        this.name = name,
+        this.manufacturer = manufacturer;
+        this.model = model;
+        this.efficiencyRating = efficiencyRating;
+        this.noiseRating = noiseRating;
+        this.wattage = wattage;
+    }
+}
+
+@Entity()
+export class MotherboardComponent implements Component {
+    @PrimaryGeneratedColumn()
+    id: number;
+
+    @Column()
+    name: string;
+    @Column()
+    year: number;
+    @Column()
+    socket: string;
+    @Column()
+    chipset: string;
+    @Column()
+    formFactor: string;
+    @Column()
+    powerConsumption: string;
+    constructor(
+        name: string,
+        year: number,
+        socket: string,
+        chipset: string,
+        formFactor: string,
+        powerConsumption: string
+    ) {
+        this.name = name;
+        this.year = year;
+        this.socket = socket;
+        this.chipset = chipset;
+        this.formFactor = formFactor;
+        this.powerConsumption = powerConsumption;
+    }
+}
+
+
+@Entity()
+export class SSDComponent implements Component {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column()
+  name: string;
+  @Column()
+  capacity: string;
+  @Column()
+  format: string;
+  @Column()
+  interface: string;
+  @Column()
+  released: string;
+  @Column()
+  controller: string;
+  @Column()
+  dram: string;
+  @Column()
+  wattage: string;
+
+  constructor(
+    name: string,
+    capacity: string,
+    format: string,
+    iface: string,
+    released: string,
+    controller: string,
+    dram: string,
+    wattage: string
+  ) {
+    this.name = name;
+    this.capacity = capacity;
+    this.format = format;
+    this.interface = iface;
+    this.released = released;
+    this.controller = controller;
+    this.dram = dram;
+    this.wattage = wattage;
+  }
 }
