@@ -13,6 +13,8 @@ export interface ComponentRepository {
     getSavedComponents(category: Category, page: number): Promise<Component[]>
     getRandomComponents(category: Category, number: number): Promise<Component[]>
     getTotalPages(category: Category): Promise<number>
+    getComponent(id: number, category: Category): Promise<Component>
+    searchComponents(category: Category, query: string): Promise<Component[]>
     saveComponents(components: Component[], category: Category): Promise<void>
 }
 
@@ -165,5 +167,23 @@ export class ComponentRepositoryImpl implements ComponentRepository {
         return (await this.dbManager.getRepository(componentType).createQueryBuilder()
             .select().orderBy('RANDOM()').take(number).getMany()) as (typeof componentType)[];
     }
+
+    async getComponent(id: number, category: Category): Promise<Component> {
+        const componentType = this.componentMap[category];
+        const component = await this.dbManager.getRepository(componentType).findOne({ where: { id } }) as (typeof componentType);
+
+        return component
+    }
+
+    async searchComponents(category: Category, query: string): Promise<Component[]> {
+        const componentType = this.componentMap[category];
+
+        return (await this.dbManager
+            .getRepository(componentType)
+            .createQueryBuilder("comp")
+            .where("LOWER(comp.name) LIKE :query", { query: `%${query.toLowerCase()}%` })
+            .getMany()) as Component[];
+    }
+
 
 }

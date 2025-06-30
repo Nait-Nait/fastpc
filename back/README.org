@@ -69,6 +69,29 @@ Retorna N componentes aleatorios.
   - 200: Lista de componentes junto a los productos scrapeados.
   - 400: Si la categoría es inválida o falta.
 
+** /components/details :: GET
+Obtiene los datos de un componente específico junto a sus productos scrapeados.
+
+- Parámetros query:
+  - ~category~ (string): Categoría del componente (ej: GPU, CPU)
+  - ~id~ (number): ID del componente a obtener
+
+- Respuestas:
+  - 200: Objeto con el componente y su lista de productos scrapeados.
+  - 400: Si la categoría o el ID son inválidos o faltan.
+
+** /components/search :: GET
+Busca componentes por nombre dentro de una categoría, y retorna los resultados junto a sus productos scrapeados.
+
+- Parámetros query:
+  - ~category~ (string): Categoría del componente (ej: GPU, CPU)
+  - ~query~ (string): Texto de búsqueda
+
+- Respuestas:
+  - 200: Lista de componentes coincidentes junto a sus productos scrapeados.
+  - 400: Si la categoría o el texto de búsqueda son inválidos o faltan.
+
+
 ** /components/addgpu :: POST
 Agrega un componente GPU.
 

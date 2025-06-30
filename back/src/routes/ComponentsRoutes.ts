@@ -40,6 +40,65 @@ async function componentsRoutes(fastify: FastifyInstance, opts: FastifyPluginOpt
 
     })
 
+    fastify.get("/details", async (request, reply) => {
+        const compoRepo = RepoHolder.getInstance();
+        const category = (request.query as any).category
+        const id = (request.query as any).id
+        if (!category || !id) {
+            reply.send({ status: "bruh", text: "Especifica una categoria y una id" })
+        }
+
+        const validCategories = Object.values(Category)
+
+        if (Object.values(Category).includes(category)) {
+            const result = await compoRepo.getComponent(id, category)
+
+            const scrapedResults: ScrapedComponent[] = []
+            const scrapedProducts = await compoRepo.scrapeProduct(result);
+            scrapedResults.push(new ScrapedComponent(result, scrapedProducts));
+
+            //reply.send(results)
+            reply.send({
+                results: scrapedResults
+            })
+        } else {
+            reply.send({
+                status: "bruh",
+                text: "Categoría no válida, ej: " + Category.GPU,
+            });
+        }
+    })
+
+    fastify.get("/search", async (request, reply) => {
+        const compoRepo = RepoHolder.getInstance();
+        const category = (request.query as any).category
+        const query = (request.query as any).query
+        if (!category || !query) {
+            reply.send({ status: "bruh", text: "Especifica una categoria y una query" })
+        }
+
+        const validCategories = Object.values(Category)
+
+        if (Object.values(Category).includes(category)) {
+            const results = await compoRepo.searchComponents(category, query)
+
+            const scrapedResults: ScrapedComponent[] = []
+            for (const value of results) {
+                const scrapedProducts = await compoRepo.scrapeProduct(value);
+                scrapedResults.push(new ScrapedComponent(value, scrapedProducts));
+            }
+
+            //reply.send(results)
+            reply.send({
+                results: scrapedResults
+            })
+        } else {
+            reply.send({
+                status: "bruh",
+                text: "Categoría no válida, ej: " + Category.GPU,
+            });
+        }
+    })
 
     fastify.get("/random", async (request, reply) => {
         const compoRepo = RepoHolder.getInstance();
