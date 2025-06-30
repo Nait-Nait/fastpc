@@ -162,6 +162,18 @@ export class ComponentRepositoryImpl implements ComponentRepository {
         } else if (productType === CPUProduct) {
             const results = await this.dbManager.getRepository(productType).find({ where: { cpuComponentId: componentId } });
             return results as CPUProduct[]
+        } else if (productType === RAMProduct) {
+            const results = await this.dbManager.getRepository(productType).find({ where: { ramComponentId: componentId } });
+            return results as RAMProduct[]
+        } else if (productType === PSUProduct) {
+            const results = await this.dbManager.getRepository(productType).find({ where: { psuComponentId: componentId } });
+            return results as PSUProduct[]
+        } else if (productType === MotherboardProduct) {
+            const results = await this.dbManager.getRepository(productType).find({ where: { motherboardComponentId: componentId } });
+            return results as MotherboardProduct[]
+        } else if (productType === SSDProduct) {
+            const results = await this.dbManager.getRepository(productType).find({ where: { ssdComponentId: componentId } });
+            return results as SSDProduct[]
         } else {
             throw new Error("Tipo de componente no soportado");
         }

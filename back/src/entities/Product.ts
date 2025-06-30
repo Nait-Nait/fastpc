@@ -13,7 +13,7 @@ export interface Product {
 @Entity()
 export class GPUProduct implements Product {
     @PrimaryGeneratedColumn()
-    id:number;
+    id: number;
 
     @Column()
     name: string;
@@ -26,9 +26,9 @@ export class GPUProduct implements Product {
 
     @Column()
     @ForeignKey<GPUComponent>("GPUComponent", "id")
-    gpuComponentId:number
+    gpuComponentId: number
 
-    constructor(name: string, price: number, store: Store, img:string, gpuComponentId: number) {
+    constructor(name: string, price: number, store: Store, img: string, gpuComponentId: number) {
         this.name = name;
         this.price = price;
         this.store = store;
@@ -40,7 +40,7 @@ export class GPUProduct implements Product {
 @Entity()
 export class CPUProduct implements Product {
     @PrimaryGeneratedColumn()
-    id:number;
+    id: number;
 
     @Column()
     name: string;
@@ -53,9 +53,9 @@ export class CPUProduct implements Product {
 
     @Column()
     @ForeignKey<CPUComponent>("CPUComponent", "id")
-    cpuComponentId:number
+    cpuComponentId: number
 
-    constructor(name: string, price: number, store: Store, img:string, cpuComponentId: number) {
+    constructor(name: string, price: number, store: Store, img: string, cpuComponentId: number) {
         this.name = name;
         this.price = price;
         this.store = store;
@@ -67,7 +67,7 @@ export class CPUProduct implements Product {
 @Entity()
 export class RAMProduct implements Product {
     @PrimaryGeneratedColumn()
-    id:number;
+    id: number;
 
     @Column()
     name: string;
@@ -80,21 +80,21 @@ export class RAMProduct implements Product {
 
     @Column()
     @ForeignKey<RAMComponent>("RAMComponent", "id")
-    cpuComponentId:number
+    ramComponentId: number
 
-    constructor(name: string, price: number, store: Store, img:string, cpuComponentId: number) {
+    constructor(name: string, price: number, store: Store, img: string, ramComponentId: number) {
         this.name = name;
         this.price = price;
         this.store = store;
         this.img = img;
-        this.cpuComponentId = cpuComponentId;
+        this.ramComponentId = ramComponentId;
     }
 }
 
 @Entity()
 export class PSUProduct implements Product {
     @PrimaryGeneratedColumn()
-    id:number;
+    id: number;
 
     @Column()
     name: string;
@@ -107,21 +107,21 @@ export class PSUProduct implements Product {
 
     @Column()
     @ForeignKey<PSUComponent>("PSUComponent", "id")
-    cpuComponentId:number
+    psuComponentId: number
 
-    constructor(name: string, price: number, store: Store, img:string, cpuComponentId: number) {
+    constructor(name: string, price: number, store: Store, img: string, psuComponentId: number) {
         this.name = name;
         this.price = price;
         this.store = store;
         this.img = img;
-        this.cpuComponentId = cpuComponentId;
+        this.psuComponentId = psuComponentId;
     }
 }
 
 @Entity()
 export class MotherboardProduct implements Product {
     @PrimaryGeneratedColumn()
-    id:number;
+    id: number;
 
     @Column()
     name: string;
@@ -134,21 +134,21 @@ export class MotherboardProduct implements Product {
 
     @Column()
     @ForeignKey<MotherboardComponent>("MotherboardComponent", "id")
-    cpuComponentId:number
+    motherboardComponentId: number
 
-    constructor(name: string, price: number, store: Store, img:string, cpuComponentId: number) {
+    constructor(name: string, price: number, store: Store, img: string, motherboardComponentId: number) {
         this.name = name;
         this.price = price;
         this.store = store;
         this.img = img;
-        this.cpuComponentId = cpuComponentId;
+        this.motherboardComponentId = motherboardComponentId;
     }
 }
 
 @Entity()
 export class SSDProduct implements Product {
     @PrimaryGeneratedColumn()
-    id:number;
+    id: number;
 
     @Column()
     name: string;
@@ -161,13 +161,13 @@ export class SSDProduct implements Product {
 
     @Column()
     @ForeignKey<SSDComponent>("SSDComponent", "id")
-    cpuComponentId:number
+    ssdComponentId: number
 
-    constructor(name: string, price: number, store: Store, img:string, cpuComponentId: number) {
+    constructor(name: string, price: number, store: Store, img: string, ssdComponentId: number) {
         this.name = name;
         this.price = price;
         this.store = store;
         this.img = img;
-        this.cpuComponentId = cpuComponentId;
+        this.ssdComponentId = ssdComponentId;
     }
 }
