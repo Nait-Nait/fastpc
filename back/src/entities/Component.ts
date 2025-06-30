@@ -3,6 +3,7 @@ import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 
 export interface Component {
+    id: number,
     name: string,
 }
 

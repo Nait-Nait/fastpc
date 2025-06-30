@@ -13,7 +13,6 @@ export default function Scaffold({ children }: ScaffoldProps) {
           <NavigationMenuDemo />
           {children}
         </main>
-
         <FooterPage />
       </div>
     </div>

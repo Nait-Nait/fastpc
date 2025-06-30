@@ -81,14 +81,26 @@ export default function NavigationMenuDemo() {
         <Input
           className="md:w-[300px] md:mx-10 mx-auto"
           type="text"
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              const inputValue = (e.target as HTMLInputElement).value;
+
+              const params = new URLSearchParams(window.location.search);
+              params.set("page", "0") // resetear la pagina
+              params.set("search", inputValue);
+
+              window.location.href = `/components?${params.toString()}`;
+            }
+          }}
           placeholder="Buscar"
         />
+
         <div className="flex flex-row space-x-5">
           <Button className="bg-[var(--foreground)] text-sm">Categorias</Button>
-          <Button 
+          <Button
             className="bg-[var(--foreground)]"
             onClick={() => (window.location.href = "/components")}
-            >Componentes</Button>
+          >Componentes</Button>
           <Button
             className="bg-[var(--main)]"
             onClick={() => (window.location.href = "/compatibility")}
@@ -98,7 +110,7 @@ export default function NavigationMenuDemo() {
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button><UserCircle/>Cuenta</Button>
+              <Button><UserCircle />Cuenta</Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-56">
               <DropdownMenuGroup>

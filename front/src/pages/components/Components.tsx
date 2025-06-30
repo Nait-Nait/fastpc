@@ -1,8 +1,94 @@
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Category } from "@/entities/ComponentCategories"
-import { useState } from "react"
+import { Product } from "@/entities/Product";
+import { ScrapedComponent } from "@/entities/ScrapedComponent";
+import { ComponentRepositoryImpl } from "@/repositories/ComponentRepository";
+import { useEffect, useState } from "react"
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 
+const ImageWithShimer = ({ src }: { src: string }) => {
+    const [thumbnailLoading, setThumbnailLoading] = useState(true);
+    return (
+        <>
+            <div
+                className={`${thumbnailLoading ? " block " : " hidden "
+                    } w-full h-full bg-zinc-300 animate-pulse`}
+            ></div>
+            <img
+                src={src}
+                alt=""
+                className={`bg-white w-full h-full object-contain transition-opacity duration-500 ${thumbnailLoading ? " opacity-0 " : "opacity-100"
+                    }`}
+                onLoad={() => setThumbnailLoading(false)}
+            />
+        </>
+    );
+};
+
+
+
+function ComponentCard({ component, category }: { component: ScrapedComponent, category: Category }) {
+
+    const agotado = component.products.length == 0
+    const producto = component.products[0] ?? null
+
+    return (
+        <div className="border border-black overflow-hidden  rounded-base mb-3 flex h-[26rem] w-80 flex-col  lg:h-[11.25rem] lg:w-200 lg:flex-row  ">
+            <div className="h-[11.25rem] w-80 border-e border-black shrink-0 bg-zinc-500 flex items-center justify-center">
+                {agotado ? (
+                    <p className="text-white font-bold text-xl">AGOTADO</p>
+                ) : (
+                    <ImageWithShimer src={component.products[0].img} />
+                )}
+            </div>
+
+            <div className="bg-[var(--foreground)] text-black h-full w-full p-3 min-w-full relative flex flex-col justify-between">
+                <div>
+                    <h3 className=" font-semibold font-publicSans">
+                        {component.component.name}
+                    </h3>
+                    <div className="font-publicSans mt-1 grid grid-cols-2 gap-x-2.5 gap-y-1 w-fit text-sm">
+                        {(Object.entries(component.component).slice(0, 3))
+                            .filter(([key]) => key !== 'name' && key !== 'id')
+                            .map(([key, value]) => (
+                                <p key={key}>
+                                    <span className="font-semibold capitalize">{key}:</span> {String(value)}
+                                </p>
+                            ))}
+                        {Object.keys(component.component).length > 4 && (
+                            <p>
+                                <span className="font-semibold text-zinc-400">...</span>
+                            </p>
+                        )}
+                    </div>
+                </div>
+
+                <div className="flex flex-row gap-4 justify-center items-center w-max mb-5">
+                    <div>
+                        <Button onClick={() => window.location.href = `/components/component?category=${category}&id=${component.component.id}`} >
+                            Ver Detalles
+                        </Button>
+                    </div>
+                    <div className="border-2 p-1 bg-[var(--main)] rounded-base">
+                        {agotado && (
+                            <p className="font-publicSans line-through">
+                                AGOTADO
+                            </p>
+                        )}
+
+                        {!agotado && (
+                            <p className="font-publicSans">
+                                ${new Intl.NumberFormat('es-CL').format(component.products[0].price)}
+                            </p>
+                        )}
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+}
 
 
 export default function Components() {
@@ -16,16 +102,59 @@ export default function Components() {
         navigate({ search: params.toString() });
     };
 
+    const handlePageChange = (newPage: number) => {
+        const params = new URLSearchParams(location.search);
+        params.set('category', category);
+        params.set('page', newPage.toString());
+        navigate({ search: params.toString() });
+    };
 
     const [searchParams] = useSearchParams();
 
     const categoryParam = searchParams.get('category') as Category | null;
     const pageParam = parseInt(searchParams.get('page') || '0', 10);
+    const searchParam = searchParams.get('search') || null;
 
     const category: Category = categoryParam ?? Category.CPU;
     const page: number = isNaN(pageParam) ? 0 : pageParam;
+    const search: string = searchParam ?? "";
 
     const categoryValues = Object.values(Category);
+
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(false);
+    const [components, setComponents] = useState([] as ScrapedComponent[]);
+    const [totalPages, setTotalPages] = useState(0)
+
+    useEffect(() => {
+        setLoading(true)
+
+        const componentRepo = new ComponentRepositoryImpl();
+        componentRepo
+            .list(category, page)
+            .then((value) => {
+                setComponents(value.results);
+                setTotalPages(value.totalPages)
+                setLoading(false);
+                console.log(value);
+            })
+            .catch(() => {
+                setError(true);
+                setLoading(false);
+            });
+    }, [category, page]);
+
+    /*if (error) {
+        return (
+            <div className="flex justify-center items-center">
+                <h1>Error al obtener los componentes</h1>
+            </div>
+        );
+    } */
+
+    if (loading) {
+        return (<h1>CARGANDO...</h1>)
+    }
 
     return (
         <div className="flex flex-col ">
@@ -34,17 +163,65 @@ export default function Components() {
                     <Button
                         key={cat}
                         onClick={() => handleClick(cat)}
-                        variant="reverse"
-                        className={`bg-[var(--background)] text-white text-lg ${category == cat
+                        className={`text-lg ${category == cat
                             ? " border border-black rounded-base bg-[var(--main)] text-black"
-                            : " bg-[var(--background)] border-0 hover:border hover:border-black"
+                            : " bg-[var(--foreground)] border-0 hover:border hover:border-black"
                             }`}>
                         {cat}
                     </Button>
                 ))}
             </div>
+            <div className="mt-5 flex flex-col justify-center items-center">
+                {components.map((component) => {
+                    return (
+                        <ComponentCard component={component} category={category} />
+                    )
+                })}
+            </div>
+
             <div>
-                HOLA
+                <div className="my-5 flex justify-center">
+                    <Pagination>
+                        <PaginationContent>
+
+                            <PaginationItem>
+                                <PaginationPrevious
+                                    href="#"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        if (page > 0) handlePageChange(page - 1);
+                                    }}
+                                />
+                            </PaginationItem>
+
+                            {Array.from({ length: totalPages }, (_, i) => (
+                                <PaginationItem key={i}>
+                                    <PaginationLink
+                                        href="#"
+                                        isActive={i === page}
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            handlePageChange(i);
+                                        }}
+                                    >
+                                        {i + 1}
+                                    </PaginationLink>
+                                </PaginationItem>
+                            ))}
+
+                            <PaginationItem>
+                                <PaginationNext
+                                    href="#"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        if (page + 1 < totalPages) handlePageChange(page + 1);
+                                    }}
+                                />
+                            </PaginationItem>
+
+                        </PaginationContent>
+                    </Pagination>
+                </div>
             </div>
         </div>
     )
