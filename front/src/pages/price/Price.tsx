@@ -86,7 +86,10 @@ export default function CotizacionPage() {
                                             : 'Sin precio'}
                                     </p>
                                 </div>
-                                <div className="ml-auto">
+                                <div className="ml-auto flex flex-col space-y-2">
+                                    <Button onClick={() => window.location.href = `/components/component?category=${c.savedCoti.category}&id=${c.component.component.id}`} >
+                                        Ver Detalles
+                                    </Button>
                                     <Button
                                         onClick={() =>
                                             removeCotizacion({
