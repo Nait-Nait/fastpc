@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import cpuIcon from "../../assets/icons/cpu.svg";
 import mbIcon from "../../assets/icons/mb.svg";
 import gpu2Icon from "../../assets/icons/gpu2.svg";
@@ -6,227 +6,281 @@ import ramIcon from "../../assets/icons/ram.svg";
 import ssdIcon from "../../assets/icons/SSD.svg";
 import psuIcon from "../../assets/icons/psu.svg";
 import { Card, CardContent } from "@/components/ui/card";
-import { useEffect } from "react";
 import { ComponentRepositoryImpl } from "@/repositories/ComponentRepository";
 import { Category } from "@/entities/ComponentCategories";
 import { ScrapedComponent } from "@/entities/ScrapedComponent";
 
-// ---------- TYPES ----------
-type ComponentDetail = Record<string, string | number>;
-type DetailsMap = Record<string, Record<string, ComponentDetail>>;
-type DetailState = { category: string; item: string } | null;
-
-// ----------- MAPA DE DETALLES POR COMPONENTE -----------
-const detailsMap: DetailsMap = {
-  Grafica: {
-    "RTX 3060 Ti": {
-      Nombre: "RTX 3060 Ti",
-      "Fecha de lanzamiento": "Dec 2020",
-      Memoria: "8 GB, GDDR6, 256 bit",
-      "GPU clock": "1410 MHz",
-      "Memory clock": "1750 MHz",
-      Benchmark: 10110,
-    },
-    "RTX 4070": {
-      Nombre: "RTX 4070",
-      "Fecha de lanzamiento": "Apr 2023",
-      Memoria: "12 GB, GDDR6X, 192 bit",
-      "GPU clock": "1920 MHz",
-      "Memory clock": "1313 MHz",
-      Benchmark: 14925,
-    },
-    "Radeon RX 6600": {
-      Nombre: "Radeon RX 6600",
-      "Fecha de lanzamiento": "Oct 2021",
-      Memoria: "8 GB, GDDR6, 128 bit",
-      "GPU clock": "1626 MHz",
-      "Memory clock": "1750 MHz",
-      Benchmark: 6717,
-    },
-  },
-  CPU: {
-    "Intel i5-12400": {
-      Nombre: "Intel i5-12400",
-      "Fecha de lanzamiento": "Jan 2022",
-      Núcleos: "6 / 12",
-      Clock: "2.5–4.4 GHz",
-      Socket: "LGA 1700",
-      Benchmark: 19096,
-    },
-    "Ryzen 5 5600X": {
-      Nombre: "Ryzen 5 5600X",
-      "Fecha de lanzamiento": "Nov 2020",
-      Núcleos: "6 / 12",
-      Clock: "3.7–4.6 GHz",
-      Socket: "AM4",
-      Benchmark: 21861,
-    },
-    "Intel i9-13900K": {
-      Nombre: "Intel i9-13900K",
-      "Fecha de lanzamiento": "Sep 2022",
-      Núcleos: "24 / 32",
-      Clock: "3–5.8 GHz",
-      Socket: "LGA 1700",
-      Benchmark: 58670,
-    },
-  },
-  SSD: {
-    "Samsung 980 Pro": {
-      Nombre: "Samsung 980 Pro",
-      "Fecha de lanzamiento": "Sep 2021",
-      Capacidad: "1 TB",
-      Formato: "M.2 2280",
-      Interfaz: "PCIe 4.0 x4",
-      DRAM: "1024 MB",
-    },
-    "WD Black SN850": {
-      Nombre: "WD Black SN850",
-      "Fecha de lanzamiento": "Oct 2020",
-      Capacidad: "1 TB",
-      Formato: "M.2 2280",
-      Interfaz: "PCIe 4.0 x4",
-      DRAM: "DRAM-less",
-    },
-    "Crucial P5": {
-      Nombre: "Crucial P5",
-      "Fecha de lanzamiento": "Jun 2021",
-      Capacidad: "500 GB",
-      Formato: "M.2 2280",
-      Interfaz: "PCIe 3.0 x4",
-      DRAM: "512 MB",
-    },
-  },
-  "Memoria RAM": {
-    "Corsair Vengeance 16GB": {
-      Producto: "Corsair Vengeance 16GB",
-      Capacidad: "16 GB",
-      Generación: "DDR4",
-      Latencia: "CL16",
-      "Velocidad lectura": "25.6 GB/s",
-      "Velocidad escritura": "23.8 GB/s",
-    },
-    "G.Skill TridentZ 32GB": {
-      Producto: "G.Skill TridentZ 32GB",
-      Capacidad: "32 GB",
-      Generación: "DDR4",
-      Latencia: "CL18",
-      "Velocidad lectura": "34.1 GB/s",
-      "Velocidad escritura": "32.5 GB/s",
-    },
-  },
-};
-
-// ----------- DATOS DE CATÁLOGO Y ÍCONOS -----------
-const catalog: Record<string, string[]> = {
-  CPU: ["Intel i5-12400", "Ryzen 5 5600X", "Intel i9-13900K"],
-  Motherboard: ["ASUS TUF B550", "MSI Z690", "Gigabyte X570"],
-  Grafica: ["RTX 3060 Ti", "RTX 4070", "Radeon RX 6600"],
-  "Memoria RAM": ["Corsair Vengeance 16GB", "G.Skill TridentZ 32GB"],
-  SSD: ["Samsung 980 Pro", "WD Black SN850", "Crucial P5"],
-  PSU: ["Corsair RM750x", "EVGA SuperNOVA 650 G5"],
-};
-
 const icons = [
   { src: cpuIcon, alt: "CPU" },
-  { src: mbIcon, alt: "Motherboard" },
-  { src: gpu2Icon, alt: "Grafica" },
-  { src: ramIcon, alt: "Memoria RAM" },
+  { src: mbIcon, alt: "MOTHERBOARD" },
+  { src: gpu2Icon, alt: "GPU" },
+  { src: ramIcon, alt: "RAM" },
   { src: ssdIcon, alt: "SSD" },
   { src: psuIcon, alt: "PSU" },
 ];
 
-// ---------- COMPONENTE PRINCIPAL ----------
+const getFieldsForCategory = (category: string, comp: any) => {
+  if (!comp) return [];
+  switch (category) {
+    case "CPU":
+      return [
+        { label: "Modelo", value: comp.name },
+        { label: "Núcleos", value: comp.cores },
+        { label: "Reloj", value: comp.clock },
+        { label: "Socket", value: comp.socket },
+        { label: "TDP", value: comp.tdp },
+        { label: "Consumo (W)", value: comp.wattage },
+      ];
+    case "GPU":
+      return [
+        { label: "Modelo", value: comp.name },
+        { label: "Memoria", value: comp.memory },
+        { label: "Consumo (W)", value: comp.wattage },
+      ];
+    case "RAM":
+      return [
+        { label: "Modelo", value: comp.name },
+        { label: "Marca", value: comp.brand },
+        { label: "Capacidad", value: comp.capacity },
+        { label: "Generación", value: comp.gen },
+        { label: "Velocidad", value: comp.speed },
+        { label: "Consumo (W)", value: comp.wattage },
+      ];
+    case "PSU":
+      return [
+        { label: "Modelo", value: comp.name },
+        { label: "Fabricante", value: comp.manufacturer },
+        { label: "Código modelo", value: comp.model },
+        { label: "Eficiencia", value: comp.efficiencyRating },
+        { label: "Ruido", value: comp.noiseRating },
+        { label: "Potencia (W)", value: comp.wattage },
+      ];
+    case "MOTHERBOARD":
+      return [
+        { label: "Modelo", value: comp.name },
+        { label: "Año", value: comp.year },
+        { label: "Socket", value: comp.socket },
+        { label: "Chipset", value: comp.chipset },
+        { label: "Consumo", value: comp.powerConsumption },
+        { label: "Memoria soportada", value: comp.memorySupport },
+      ];
+    case "SSD":
+      return [
+        { label: "Modelo", value: comp.name },
+        { label: "Capacidad", value: comp.capacity },
+        { label: "Formato", value: comp.format },
+        { label: "Interfaz", value: comp.interface },
+        { label: "Lanzamiento", value: comp.released },
+        { label: "DRAM", value: comp.dram },
+        { label: "Consumo (W)", value: comp.wattage },
+      ];
+    default:
+      return Object.entries(comp).map(([k, v]) => ({
+        label: k,
+        value: v,
+      }));
+  }
+};
+
 const Comp: React.FC = () => {
   const [active, setActive] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [selectedComponents, setSelectedComponents] = useState<
     Record<string, string>
   >({});
-  const [detail, setDetail] = useState<DetailState>(null);
+  const [detail, setDetail] = useState<ScrapedComponent | null>(null);
 
-  // Estados para componentes CPU y GPU
-  const [cpuComponents, setCpuComponents] = useState<ScrapedComponent[]>([]);
-  const [loadingCPUs, setLoadingCPUs] = useState(false);
-  const [errorCPUs, setErrorCPUs] = useState(false);
+  const initialState: Record<
+    string,
+    { data: ScrapedComponent[]; loading: boolean; error: boolean }
+  > = {
+    CPU: { data: [], loading: false, error: false },
+    GPU: { data: [], loading: false, error: false },
+    MOTHERBOARD: { data: [], loading: false, error: false },
+    RAM: { data: [], loading: false, error: false },
+    PSU: { data: [], loading: false, error: false },
+    SSD: { data: [], loading: false, error: false },
+  };
+  const ITEMS_PER_PAGE = 5;
+  const [componentState, setComponentState] = useState(initialState);
+  const [compatibilityError, setCompatibilityError] = useState<string | null>(
+    null
+  );
+  const [pageState, setPageState] = useState<Record<string, number>>({
+    CPU: 1,
+    GPU: 1,
+    MOTHERBOARD: 1,
+    RAM: 1,
+    PSU: 1,
+    SSD: 1,
+  });
 
-  const [gpuComponents, setGpuComponents] = useState<ScrapedComponent[]>([]);
-  const [loadingGPUs, setLoadingGPUs] = useState(false);
-  const [errorGPUs, setErrorGPUs] = useState(false);
-
+  // TODO: Efecto de compatibilidad
   useEffect(() => {
-    if (active === "Grafica") {
-      setLoadingGPUs(true);
-      const repo = new ComponentRepositoryImpl();
-      repo
-        .list(Category.GPU, 0)
-        .then((res) => {
-          setGpuComponents(res.results);
-          setLoadingGPUs(false);
-        })
-        .catch(() => {
-          setErrorGPUs(true);
-          setLoadingGPUs(false);
-        });
+    const cpuName = selectedComponents["CPU"];
+    const ramName = selectedComponents["RAM"];
+    const mbName = selectedComponents["MOTHERBOARD"];
+    const gpuName = selectedComponents["GPU"];
+    const ssdName = selectedComponents["SSD"];
+    const psuName = selectedComponents["PSU"];
+
+    const cpuData = componentState["CPU"].data.find(
+      (item) => item.component.name === cpuName
+    );
+    const ramData = componentState["RAM"].data.find(
+      (item) => item.component.name === ramName
+    );
+    const mbData = componentState["MOTHERBOARD"].data.find(
+      (item) => item.component.name === mbName
+    );
+    const gpuData = componentState["GPU"].data.find(
+      (item) => item.component.name === gpuName
+    );
+    const ssdData = componentState["SSD"].data.find(
+      (item) => item.component.name === ssdName
+    );
+    const psuData = componentState["PSU"].data.find(
+      (item) => item.component.name === psuName
+    );
+
+    function hasSocket(component: any): component is { socket: string } {
+      return component && typeof component.socket === "string";
     }
-    // else setGpuComponents([]);
+    function hasGen(component: any): component is { gen: string } {
+      return component && typeof component.gen === "string";
+    }
+    function hasMemorySupport(
+      component: any
+    ): component is { memorySupport: string } {
+      return component && typeof component.memorySupport === "string";
+    }
+
+    if (
+      cpuData &&
+      mbData &&
+      hasSocket(cpuData.component) &&
+      hasSocket(mbData.component)
+    ) {
+      const cpuSocket = cpuData.component.socket;
+      const mbSocket = mbData.component.socket;
+      if (cpuSocket !== mbSocket) {
+        setCompatibilityError(
+          `Incompatibilidad detectada: El socket de la CPU (${cpuSocket}) no coincide con el de la Motherboard (${mbSocket})`
+        );
+        return;
+      }
+    }
+
+    if (
+      ramData &&
+      mbData &&
+      hasGen(ramData.component) &&
+      hasMemorySupport(mbData.component)
+    ) {
+      const ramGen = ramData.component.gen.trim().toUpperCase();
+      const mbMemSupport = mbData.component.memorySupport.trim().toUpperCase();
+      const supportedGens = mbMemSupport.split(/,|;/).map((x) => x.trim());
+      if (!supportedGens.includes(ramGen)) {
+        setCompatibilityError(
+          `Incompatibilidad detectada: La RAM seleccionada (${ramGen}) NO es compatible con la Motherboard (${mbMemSupport})`
+        );
+        return;
+      }
+    }
+
+    function parseWattage(value: any): number {
+      if (!value) return 0;
+      return parseInt(String(value).replace(/[^0-9]/g, ""), 10) || 0;
+    }
+
+    const totalWattage =
+      parseWattage((cpuData?.component as any)?.wattage) +
+      parseWattage((gpuData?.component as any)?.wattage) +
+      parseWattage((ramData?.component as any)?.wattage) +
+      parseWattage((mbData?.component as any)?.powerConsumption) +
+      parseWattage((ssdData?.component as any)?.wattage);
+
+    const psuWattage = parseWattage((psuData?.component as any)?.wattage);
+
+    if (psuData && psuWattage > 0 && totalWattage > 0) {
+      const margen = Math.round(psuWattage * 0.8);
+      if (totalWattage > margen) {
+        setCompatibilityError(
+          `Incompatibilidad detectada: El consumo total estimado de tus componentes (${totalWattage}W) supera el 80% de la capacidad de tu fuente (${psuWattage}W). Elige una fuente más potente.`
+        );
+        return;
+      }
+    }
+    setCompatibilityError(null);
+  }, [selectedComponents, componentState]);
+
+  // TODO: Efecto de cargar componentes al iniciar
+  useEffect(() => {
+    if (!active || !(active in componentState)) return;
+    setComponentState((prev) => ({
+      ...prev,
+      [active]: { ...prev[active], loading: true, error: false },
+    }));
+
+    const repo = new ComponentRepositoryImpl();
+    repo
+      .list(Category[active as keyof typeof Category], 0)
+      .then((res) => {
+        setComponentState((prev) => ({
+          ...prev,
+          [active]: { data: res.results, loading: false, error: false },
+        }));
+      })
+      .catch(() => {
+        setComponentState((prev) => ({
+          ...prev,
+          [active]: { ...prev[active], loading: false, error: true },
+        }));
+      });
   }, [active]);
 
-  useEffect(() => {
-    if (active === "CPU") {
-      setLoadingCPUs(true);
-      const repo = new ComponentRepositoryImpl();
-      repo
-        .list(Category.CPU, 0)
-        .then((res) => {
-          setCpuComponents(res.results);
-          setLoadingCPUs(false);
-        })
-        .catch(() => {
-          setErrorCPUs(true);
-          setLoadingCPUs(false);
-        });
-    }
-    // Opcional: Si cambias de categoría, limpia CPUs
-    // else setCpuComponents([]);
-  }, [active]);
-
-  const currentDetail =
-    detail &&
-    detailsMap[detail.category] &&
-    detailsMap[detail.category][detail.item]
-      ? detailsMap[detail.category][detail.item]
-      : null;
-
-  let list: any[] = [];
-  if (active === "CPU") {
-    list = cpuComponents.filter((item) =>
+  let list: ScrapedComponent[] = [];
+  if (active && componentState[active]) {
+    list = componentState[active].data.filter((item: ScrapedComponent) =>
       item.component.name.toLowerCase().includes(query.toLowerCase())
     );
-  } else if (active === "Grafica") {
-    list = gpuComponents.filter((item) =>
-      item.component.name.toLowerCase().includes(query.toLowerCase())
-    );
-  } else if (active) {
-    list =
-      catalog[active]?.filter((item) =>
-        item.toLowerCase().includes(query.toLowerCase())
-      ) ?? [];
   }
+
+  const paginatedList = (category: string, items: ScrapedComponent[]) => {
+    const currentPage = pageState[category] || 1;
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    const end = start + ITEMS_PER_PAGE;
+    return items.slice(start, end);
+  };
+
+  const totalPages = (category: string, items: ScrapedComponent[]) =>
+    Math.ceil(items.length / ITEMS_PER_PAGE);
 
   return (
     <div className="min-h-screen flex flex-col bg-[var(--background)] text-[var(--foreground)]">
-      <div className="h-[70px] shrink-0" />
+      <div className="h-[48px] shrink-0" />
 
-      <h1 className="text-3xl font-bold text-center mb-1">
+      <h1 className="mb-24 text-3xl font-bold text-center ">
         Selecciona tus Componentes
       </h1>
 
-      {/* LISTA DE COMPONENTES SELECCIONADOS */}
-      <div className="w-full max-w-[1200px] mx-auto px-6 md:px-20 mb-6">
+      {/*TODO: Lista de Componentes Seleccionados*/}
+      <div className="w-full max-w-[1100px] mx-auto px-6 md:px-20 mb-6">
         <div className="bg-[var(--secondary-background)] border border-[var(--border)] rounded-xl p-4 shadow-md">
           <h2 className="text-lg font-semibold mb-2 text-[var(--main)]">
             Tu Configuración
           </h2>
+
+          {compatibilityError && (
+            <div className="mb-4 mt-4 p-1.5 rounded bg-red-100 border border-red-300 text-red-700 text-sm font-semibold flex items-center gap-2">
+              {compatibilityError}
+            </div>
+          )}
+          <p className="text-sm text-gray-500 mb-2">
+            Haz clic en un componente para ver sus detalles o eliminarlo de la
+            configuración.
+          </p>
+
           {Object.keys(selectedComponents).length === 0 ? (
             <p className="text-sm text-gray-400">
               No has seleccionado ningún componente aún.
@@ -263,191 +317,182 @@ const Comp: React.FC = () => {
         {active ? `Seleccionado: ${active}` : "Ningún componente seleccionado"}
       </p>
 
-      {/* TARJETAS DE CATEGORÍAS */}
+      {/* TODO: Desde acá empieza la lógica de las tarjetas */}
       <div className="flex flex-col justify-start items-center px-6 md:px-35 mt-4">
-        <div className="pb-16 grid justify-items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-[900px] w-full">
-          {icons.map(({ src, alt }, i) => (
-            <Card
-              key={i}
-              className={`w-66 h-63 cursor-pointer transition-transform duration-300 hover:-translate-y-1 ${
-                active === alt
-                  ? "ring-2 ring-[var(--main)] ring-offset-2 ring-offset-[var(--background)] bg-[var(--background)]"
-                  : "border border-[var(--border)] shadow-[var(--shadow-big)] bg-[var(--foreground)]"
-              }`}
-              onClick={() => {
-                if (detail) {
-                  setDetail(null);
-                  setActive(alt);
-                  setQuery("");
-                  return;
-                }
-                setActive(active === alt ? null : alt);
-                setQuery("");
-              }}
-            >
-              {active === alt || (detail && detail.category === alt) ? (
-                detail && detail.category === alt && currentDetail ? (
-                  // PANEL DETALLE
-                  <CardContent
-                    className="flex flex-col w-full h-full p-4 animate-fade-in"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <button
-                      className="self-start mb-2 px-3 py-1 rounded-lg bg-[var(--secondary-background)] text-[var(--main)] text-xs font-bold hover:underline"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setDetail(null);
-                      }}
-                    >
-                      ← Volver
-                    </button>
+        <div className="bg-[var(--background] pb-16 grid justify-items-center grid-cols-3 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-[1100px] w-full">
+          {icons.map(({ src, alt }, i) => {
+            const filteredList = componentState[alt].data.filter(
+              (item: ScrapedComponent) =>
+                item.component.name.toLowerCase().includes(query.toLowerCase())
+            );
 
+            const currentPage = pageState[alt] || 1;
+            const start = (currentPage - 1) * ITEMS_PER_PAGE;
+            const end = start + ITEMS_PER_PAGE;
+            const paginated = filteredList.slice(start, end);
+
+            return (
+              <Card
+                key={i}
+                className={`w-63 h-63 rounded-xl cursor-pointer transition-transform duration-300 hover:-translate-y-1 ${
+                  active === alt
+                    ? "ring-2 ring-[var(--main)] ring-offset-2 ring-offset-[var(--background)] bg-[var(--background)]"
+                    : "border border-[var(--background)] hover:border-[var(--main)] shadow-[var(--shadow-big)] bg-[var(--foreground)]"
+                }`}
+                onClick={() => {
+                  setDetail(null);
+                  setActive(active === alt ? null : alt);
+                  setQuery("");
+                }}
+              >
+                {active === alt ? (
+                  detail ? (
+                    // TODO: Panel de Detalle
+                    <CardContent
+                      className="flex flex-col w-full h-full p-4 animate-fade-in"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <button
+                        className="self-start mb-2 px-3 py-1 rounded-lg bg-[var(--secondary-background)] text-[var(--main)] text-xs font-bold hover:underline"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setDetail(null);
+                        }}
+                      >
+                        ← Volver
+                      </button>
+                      <img
+                        src={src}
+                        alt={alt}
+                        className="w-6 h-6 absolute top-3 right-3 opacity-90 brightness-[1.2] filter drop-shadow-sm"
+                      />
+                      <ul className="text-xs w-full bg-[var(--background)] rounded-xl px-4 py-3 shadow-inner flex flex-col items-start justify-start flex-1">
+                        {getFieldsForCategory(active, detail.component).map(
+                          ({ label, value }) =>
+                            value && (
+                              <li
+                                key={label}
+                                className="mb-1 break-words w-full"
+                              >
+                                <span className="font-bold text-[var(--main)]">
+                                  {label}:
+                                </span>
+                                <span className="text-[var(--foreground)]">
+                                  {value}
+                                </span>
+                              </li>
+                            )
+                        )}
+                      </ul>
+                    </CardContent>
+                  ) : (
+                    // TODO: Panel de Búsqueda de Componentes
+                    <CardContent
+                      className="flex flex-col w-full h-full p-0 animate-fade-in"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <input
+                        type="text"
+                        className="w-[90%] mx-auto mb-4 px-2 py-1 mb-2 rounded-sm text-sm text-[var(--foreground)] bg-[var(--secondary-background)] shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--main)] transition-all duration-800"
+                        placeholder={`Buscar ${alt}...`}
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                        autoFocus={active === alt}
+                      />
+                      {/*TODO: Lista de Componentes */}
+                      <ul className="bg-[var(--background)]/80 ...">
+                        {componentState[alt].loading ? (
+                          <li>Cargando...</li>
+                        ) : componentState[alt].error ? (
+                          <li>Error al cargar {alt}</li>
+                        ) : filteredList.length > 0 ? (
+                          <>
+                            {paginated.map((item) => (
+                              <li
+                                key={item.component.id}
+                                className="py-0.20 px-0.5 hover:bg-[var(--secondary-background)] rounded-md cursor-pointer transition-colors"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setSelectedComponents((prev) => ({
+                                    ...prev,
+                                    [alt]: item.component.name,
+                                  }));
+                                  setDetail(item);
+                                }}
+                              >
+                                <span className="text-sm font-bold whitespace-nowrap overflow-hidden text-ellipsis block max-w-full">
+                                  {item.component.name}
+                                </span>
+                              </li>
+                            ))}
+                            {/*TODO: Controles de paginación */}
+                            <li className="flex justify-center gap-2 mt-2">
+                              <button
+                                className="px-2 py-1 rounded  text-xs text-white"
+                                disabled={currentPage === 1}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setPageState((prev) => ({
+                                    ...prev,
+                                    [alt]: prev[alt] - 1,
+                                  }));
+                                }}
+                              >
+                                ←
+                              </button>
+                              <span className="px-2 text-xs text-gray-600">
+                                Página {currentPage} de{" "}
+                                {Math.ceil(
+                                  filteredList.length / ITEMS_PER_PAGE
+                                )}
+                              </span>
+                              <button
+                                className="px-2 py-1 rounded text-xs text-white"
+                                disabled={
+                                  currentPage ===
+                                    Math.ceil(
+                                      filteredList.length / ITEMS_PER_PAGE
+                                    ) ||
+                                  Math.ceil(
+                                    filteredList.length / ITEMS_PER_PAGE
+                                  ) === 0
+                                }
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setPageState((prev) => ({
+                                    ...prev,
+                                    [alt]: prev[alt] + 1,
+                                  }));
+                                }}
+                              >
+                                →
+                              </button>
+                            </li>
+                          </>
+                        ) : (
+                          <li className="text-center text-gray-500">
+                            No hay resultados
+                          </li>
+                        )}
+                      </ul>
+                    </CardContent>
+                  )
+                ) : (
+                  //TODO: Pantalla Principal de la Tarjeta
+                  <CardContent className="flex flex-col items-center h-full gap-2 justify-end">
                     <img
                       src={src}
                       alt={alt}
-                      className="w-6 h-6 absolute top-3 right-3 opacity-90 brightness-[1.2] filter drop-shadow-sm"
+                      className="mt-8 w-4/7 h-auto object-contain filter brightness-[1.2] grayscale transition-transform duration-200 hover:scale-115"
                     />
-
-                    <ul className="text-xs w-full bg-[var(--background)] rounded-xl px-4 py-3 shadow-inner flex flex-col items-start justify-start flex-1">
-                      {Object.entries(currentDetail).map(([k, v]) => (
-                        <li key={k} className="mb-1 break-words w-full">
-                          <span className="font-bold text-[var(--main)]">
-                            {k}:
-                          </span>{" "}
-                          <span className="text-[var(--foreground)]">{v}</span>
-                        </li>
-                      ))}
-                    </ul>
+                    <span className="mt-3 text-[1.02rem] font-semibold text-[var(--secondary-background)] tracking-tight opacity-95">
+                      {alt}
+                    </span>
                   </CardContent>
-                ) : (
-                  // BUSCADOR Y LISTA
-                  <CardContent
-                    className="flex flex-col w-full h-full p-0 animate-fade-in"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <input
-                      type="text"
-                      className="w-[90%] mx-auto mt-2 px-2 py-1 mb-2 rounded-sm text-sm text-[var(--foreground)] bg-[var(--secondary-background)] shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--main)] transition-all duration-800"
-                      placeholder={`Buscar ${alt}...`}
-                      value={query}
-                      onChange={(e) => setQuery(e.target.value)}
-                      autoFocus
-                    />
-
-                    {/* ----------- LISTADO FILTRADO ----------- */}
-                    <ul className="bg-[var(--background)]/80 backdrop-blur-md rounded-xl p-2 shadow-inner">
-                      {active === "CPU" ? (
-                        loadingCPUs ? (
-                          <li>Cargando...</li>
-                        ) : errorCPUs ? (
-                          <li>Error al cargar CPUs</li>
-                        ) : list.length > 0 ? (
-                          list.map((item) => (
-                            <li
-                              key={item.component.id}
-                              className="py-0.15 px-1 hover:bg-[var(--secondary-background)] rounded-md cursor-pointer transition-colors"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setSelectedComponents((prev) => ({
-                                  ...prev,
-                                  CPU: item.component.name,
-                                }));
-                                setDetail({
-                                  category: "CPU",
-                                  item: item.component.name,
-                                });
-                              }}
-                            >
-                              <span className="font-bold">
-                                {item.component.name}
-                              </span>
-                            </li>
-                          ))
-                        ) : (
-                          <li className="text-center text-gray-500">
-                            No hay resultados
-                          </li>
-                        )
-                      ) : active === "Grafica" ? (
-                        loadingGPUs ? (
-                          <li>Cargando...</li>
-                        ) : errorGPUs ? (
-                          <li>Error al cargar GPUs</li>
-                        ) : list.length > 0 ? (
-                          list.map((item) => (
-                            <li
-                              key={item.component.id}
-                              className="py-0.15 px-1 hover:bg-[var(--secondary-background)] rounded-md cursor-pointer transition-colors"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setSelectedComponents((prev) => ({
-                                  ...prev,
-                                  Grafica: item.component.name,
-                                }));
-                                setDetail({
-                                  category: "Grafica",
-                                  item: item.component.name,
-                                });
-                              }}
-                            >
-                              <span className="font-bold">
-                                {item.component.name}
-                              </span>
-                            </li>
-                          ))
-                        ) : (
-                          <li className="text-center text-gray-500">
-                            No hay resultados
-                          </li>
-                        )
-                      ) : list.length > 0 ? (
-                        list.map((item) => (
-                          <li
-                            key={item}
-                            className="py-0.15 px-1 hover:bg-[var(--secondary-background)] rounded-md cursor-pointer transition-colors"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setSelectedComponents((prev) => ({
-                                ...prev,
-                                [active!]: item,
-                              }));
-                              if (
-                                detailsMap[active!] &&
-                                detailsMap[active!][item]
-                              ) {
-                                setDetail({ category: active!, item });
-                              } else {
-                                setDetail(null);
-                                setActive(null);
-                              }
-                            }}
-                          >
-                            {item}
-                          </li>
-                        ))
-                      ) : (
-                        <li className="text-center text-gray-500">
-                          No hay resultados
-                        </li>
-                      )}
-                    </ul>
-                  </CardContent>
-                )
-              ) : (
-                <CardContent className="flex flex-col items-center h-full gap-2">
-                  <img
-                    src={src}
-                    alt={alt}
-                    className="w-4/7 h-auto object-contain filter brightness-[1.2] grayscale transition-transform duration-200 hover:scale-105"
-                  />
-
-                  <span className="mt-3 text-[1.02rem] font-semibold text-[var(--secondary-background)] tracking-tight opacity-95">
-                    {alt}
-                  </span>
-                </CardContent>
-              )}
-            </Card>
-          ))}
+                )}
+              </Card>
+            );
+          })}
         </div>
       </div>
     </div>
