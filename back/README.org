@@ -160,6 +160,8 @@ Agrega un componente Placa Madre.
   - ~chipset~ (string)
   - ~formFactor~ (string)
   - ~powerConsumption~ (string)
+  - ~memorySupport~ (string)
+  - ~pcieSupport~ (string)
 
 - Respuestas:
   - 200: Motherboard agregada correctamente.
