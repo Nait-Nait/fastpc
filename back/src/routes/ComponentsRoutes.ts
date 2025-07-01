@@ -201,14 +201,14 @@ async function componentsRoutes(fastify: FastifyInstance, opts: FastifyPluginOpt
 
     fastify.post("/addmotherboard", async (request, reply) => {
         const compoRepo = RepoHolder.getInstance();
-        const { name, year, socket, chipset, formFactor, powerConsumption } = request.body as any;
+        const { name, year, socket, chipset, formFactor, powerConsumption, memorySupport, pcieSupport } = request.body as any;
 
-        if (!name || year === undefined || !socket || !chipset || !formFactor || !powerConsumption) {
+        if (!name || year === undefined || !socket || !chipset || !formFactor || !powerConsumption || !memorySupport || !pcieSupport) {
             return reply.code(400).send({ status: "error", text: "Faltan parámetros" });
         }
 
         try {
-            const component = new MotherboardComponent(name, Number(year), socket, chipset, formFactor, powerConsumption);
+            const component = new MotherboardComponent(name, Number(year), socket, chipset, formFactor, powerConsumption, memorySupport, pcieSupport);
             await compoRepo.saveComponents([component], Category.MOTHERBOARD);
             return reply.send({ status: "OK" });
         } catch (error) {
