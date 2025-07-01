@@ -120,7 +120,7 @@ export class PSUComponent implements Component {
         wattage: string
     ) {
         this.name = name,
-        this.manufacturer = manufacturer;
+            this.manufacturer = manufacturer;
         this.model = model;
         this.efficiencyRating = efficiencyRating;
         this.noiseRating = noiseRating;
@@ -145,13 +145,19 @@ export class MotherboardComponent implements Component {
     formFactor: string;
     @Column()
     powerConsumption: string;
+    @Column()
+    memorySupport: string;
+    @Column()
+    pcieSupport: string;
     constructor(
         name: string,
         year: number,
         socket: string,
         chipset: string,
         formFactor: string,
-        powerConsumption: string
+        powerConsumption: string,
+        memorySupport: string,
+        pcieSupport: string
     ) {
         this.name = name;
         this.year = year;
@@ -159,49 +165,51 @@ export class MotherboardComponent implements Component {
         this.chipset = chipset;
         this.formFactor = formFactor;
         this.powerConsumption = powerConsumption;
+        this.memorySupport = memorySupport;
+        this.pcieSupport = pcieSupport
     }
 }
 
 
 @Entity()
 export class SSDComponent implements Component {
-  @PrimaryGeneratedColumn()
-  id: number;
+    @PrimaryGeneratedColumn()
+    id: number;
 
-  @Column()
-  name: string;
-  @Column()
-  capacity: string;
-  @Column()
-  format: string;
-  @Column()
-  interface: string;
-  @Column()
-  released: string;
-  @Column()
-  controller: string;
-  @Column()
-  dram: string;
-  @Column()
-  wattage: string;
+    @Column()
+    name: string;
+    @Column()
+    capacity: string;
+    @Column()
+    format: string;
+    @Column()
+    interface: string;
+    @Column()
+    released: string;
+    @Column()
+    controller: string;
+    @Column()
+    dram: string;
+    @Column()
+    wattage: string;
 
-  constructor(
-    name: string,
-    capacity: string,
-    format: string,
-    iface: string,
-    released: string,
-    controller: string,
-    dram: string,
-    wattage: string
-  ) {
-    this.name = name;
-    this.capacity = capacity;
-    this.format = format;
-    this.interface = iface;
-    this.released = released;
-    this.controller = controller;
-    this.dram = dram;
-    this.wattage = wattage;
-  }
+    constructor(
+        name: string,
+        capacity: string,
+        format: string,
+        iface: string,
+        released: string,
+        controller: string,
+        dram: string,
+        wattage: string
+    ) {
+        this.name = name;
+        this.capacity = capacity;
+        this.format = format;
+        this.interface = iface;
+        this.released = released;
+        this.controller = controller;
+        this.dram = dram;
+        this.wattage = wattage;
+    }
 }
