@@ -306,13 +306,23 @@ const Comp: React.FC = () => {
     <div className="min-h-screen flex flex-col bg-[var(--background)] text-[var(--foreground)]">
       <div className="h-[48px] shrink-0" />
 
-      <h1 className="mb-24 text-3xl font-bold text-center ">
+      <h1 className="mb-4 text-3xl font-bold text-center ">
         Selecciona tus Componentes
       </h1>
+      <p className="mb-14 text-base text-center text-gray-400 max-w-xl mx-auto font-normal">
+        Elige piezas para armar tu PC y revisa si son compatibles, ¡sin ser
+        experto!
+      </p>
 
       {/*TODO: Lista de Componentes Seleccionados*/}
       <div className="w-full max-w-[1100px] mx-auto px-6 md:px-20 mb-6">
-        <div className="bg-[var(--secondary-background)] border border-[var(--border)] rounded-xl p-4 shadow-md">
+        <div
+          className="backdrop-blur-md bg-[var(--secondary-background)] border border-[var(--border)] rounded-xl p-4 shadow-md"
+          style={{
+            background:
+              "linear-gradient(135deg, rgba(36,39,50,0.90) 80%, rgba(60,70,100,0.10) 100%)",
+          }}
+        >
           <h2 className="text-lg font-semibold mb-2 text-[var(--main)]">
             Tu Configuración
           </h2>
@@ -334,25 +344,40 @@ const Comp: React.FC = () => {
           ) : (
             <ul className="space-y-2">
               {Object.entries(selectedComponents).map(
-                ([category, component]) => (
-                  <li
-                    key={category}
-                    className="flex justify-between items-center border-b border-[var(--border)] pb-1 text-sm cursor-pointer hover:bg-[var(--foreground)]/10 transition-colors rounded"
-                    title={`Eliminar ${category}`}
-                    onClick={() => {
-                      setSelectedComponents((prev) => {
-                        const next = { ...prev };
-                        delete next[category];
-                        return next;
-                      });
-                    }}
-                  >
-                    <span className="text-gray-300">{category}:</span>
-                    <span className="font-medium text-[var(--foreground)] ml-1">
-                      {component}
-                    </span>
-                  </li>
-                )
+                ([category, component]) => {
+                  // Buscar el ícono correspondiente
+                  const iconObj = icons.find((ic) => ic.alt === category);
+                  return (
+                    <li
+                      key={category}
+                      className="flex justify-between items-center border-b border-[var(--border)] pb-1 text-sm cursor-pointer hover:bg-[var(--foreground)]/10 transition-colors rounded"
+                      title={`Eliminar ${category}`}
+                      onClick={() => {
+                        setSelectedComponents((prev) => {
+                          const next = { ...prev };
+                          delete next[category];
+                          return next;
+                        });
+                      }}
+                    >
+                      <span className="text-gray-300 flex items-center gap-2">
+                        {/* Ícono pequeño */}
+                        {iconObj && (
+                          <img
+                            src={iconObj.src}
+                            alt={iconObj.alt}
+                            className="w-5 h-5 opacity-80"
+                            style={{ minWidth: 20, minHeight: 20 }}
+                          />
+                        )}
+                        {category}:
+                      </span>
+                      <span className="font-medium text-[var(--foreground)] ml-1">
+                        {component}
+                      </span>
+                    </li>
+                  );
+                }
               )}
             </ul>
           )}
@@ -380,10 +405,10 @@ const Comp: React.FC = () => {
             return (
               <Card
                 key={i}
-                className={`w-63 h-63 rounded-xl cursor-pointer transition-transform duration-300 hover:-translate-y-1 ${
+                className={`w-63 h-63 rounded-3xl cursor-pointer transition-transform duration-300 hover:-translate-y-1 ${
                   active === alt
-                    ? "ring-2 ring-[var(--main)] ring-offset-2 ring-offset-[var(--background)] bg-[var(--background)]"
-                    : "border border-[var(--background)] hover:border-[var(--main)] shadow-[var(--shadow-big)] bg-[var(--foreground)]"
+                    ? "ring-2 rounded-3xl ring-[var(--main)] ring-offset-2 ring-offset-[var(--background)] bg-[var(--background)]"
+                    : "border rounded-3xl border-[var(--background)] hover:border-[var(--main)] shadow-[var(--shadow-big)] bg-[var(--foreground)]"
                 }`}
                 onClick={() => {
                   setDetail(null);
@@ -395,7 +420,7 @@ const Comp: React.FC = () => {
                   detail ? (
                     // TODO: Panel de Detalle
                     <CardContent
-                      className="flex flex-col w-full h-full p-4 animate-fade-in"
+                      className="rounded-3xl flex flex-col w-full h-full p-4 animate-fade-in"
                       onClick={(e) => e.stopPropagation()}
                     >
                       <button
@@ -434,7 +459,7 @@ const Comp: React.FC = () => {
                   ) : (
                     // TODO: Panel de Búsqueda de Componentes
                     <CardContent
-                      className="flex flex-col w-full h-full p-0 animate-fade-in"
+                      className="rounded-3xl flex flex-col w-full h-full p-0 animate-fade-in"
                       onClick={(e) => e.stopPropagation()}
                     >
                       <input
@@ -525,7 +550,7 @@ const Comp: React.FC = () => {
                   )
                 ) : (
                   //TODO: Pantalla Principal de la Tarjeta
-                  <CardContent className="flex flex-col items-center h-full gap-2 justify-end">
+                  <CardContent className="rounded-3xl flex flex-col items-center h-full gap-2 justify-end">
                     <img
                       src={src}
                       alt={alt}
@@ -533,6 +558,27 @@ const Comp: React.FC = () => {
                     />
                     <span className="mt-3 text-[1.02rem] font-semibold text-[var(--secondary-background)] tracking-tight opacity-95">
                       {alt}
+                    </span>
+                    {/* Descripción corta */}
+                    <span className="text-xs text-gray-500 text-center mt-1 min-h-[18px]">
+                      {(() => {
+                        switch (alt) {
+                          case "CPU":
+                            return "Procesador central";
+                          case "MOTHERBOARD":
+                            return "Tarjeta madre para tu PC";
+                          case "GPU":
+                            return "Tarjeta gráfica de video";
+                          case "RAM":
+                            return "Memoria principal";
+                          case "SSD":
+                            return "Disco de estado sólido";
+                          case "PSU":
+                            return "Fuente de poder";
+                          default:
+                            return "";
+                        }
+                      })()}
                     </span>
                   </CardContent>
                 )}

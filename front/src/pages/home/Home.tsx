@@ -11,7 +11,6 @@ import { Category } from "@/entities/ComponentCategories";
 import { ScrapedComponent } from "@/entities/ScrapedComponent";
 import { ComponentRepositoryImpl } from "@/repositories/ComponentRepository";
 
-
 function SkeletonCard() {
   return (
     <Card className="w-full max-w-sm">
@@ -69,12 +68,7 @@ export default function Home() {
       <div>
         <div className="flex flex-row justify-center w-full pb-10">
           <div className="flex flex-col gap-4 text-center">
-            <h1 className="text-3xl">
-              Componentes Mas{" "}
-              <span className="relative px-2 sm:mr-2 mr-0 md:[&_svg]:size-[45px] sm:[&_svg]:size-7 bg-[var(--secondary-background)] rounded-base border-2 border-border/40 dark:border-border/70">
-                Buscados
-              </span>{" "}
-            </h1>
+            <h1 className="text-3xl">Componentes Mas Buscados</h1>
           </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -90,39 +84,36 @@ export default function Home() {
     <div className="mb-15">
       <div className="flex flex-row justify-center w-full pb-10">
         <div className="flex flex-col gap-4 text-center">
-          <h1 className="text-3xl">
-            Componentes Mas{" "}
-            <span className="relative px-2 sm:mr-2 mr-0 md:[&_svg]:size-[45px] sm:[&_svg]:size-7 bg-[var(--secondary-background)] rounded-base border-2 border-border/40 dark:border-border/70">
-              Buscados
-            </span>{" "}
-          </h1>
+          <h1 className="text-3xl">Componentes Mas Buscados</h1>
+          <p className="text-base text-center text-gray-400 mb-6 max-w-xl mx-auto font-normal">
+            Compara componentes y arma tu PC ideal, sin ser experto.
+          </p>
         </div>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {components
-          .filter((value) => {
-            return value.products.length > 0;
-          })
-          .slice(0, 6)
-          .map((component) => (
-            <>
-              <CardComponent
-                key={component.component.name}
-                name={component.component.name}
-                onClick={() =>
-                  (window.location.href = `/components/component?category=${Category.GPU}&id=${component.component.id}`)
-                }
-                description={`precio: ${
-                  component.products[0]
-                    ? `$ ${new Intl.NumberFormat("es-CL").format(
-                        component.products[0].price
-                      )}`
-                    : "Agotado"
-                }`}
-                img={component.products[0]?.img || undefined}
-              />
-            </>
-          ))}
+      <div className="overflow-x-auto pb-4 hide-scrollbar">
+        <div className="flex gap-6 w-max px-4 snap-x snap-mandatory">
+          {components
+            .filter((value) => value.products.length > 0)
+            .slice(0, 12) // puedes mostrar más de 6 en horizontal
+            .map((component) => (
+              <div key={component.component.name} className="snap-center">
+                <CardComponent
+                  name={component.component.name}
+                  onClick={() =>
+                    (window.location.href = `/components/component?category=${Category.GPU}&id=${component.component.id}`)
+                  }
+                  description={`precio: ${
+                    component.products[0]
+                      ? `$ ${new Intl.NumberFormat("es-CL").format(
+                          component.products[0].price
+                        )}`
+                      : "Agotado"
+                  }`}
+                  img={component.products[0]?.img || undefined}
+                />
+              </div>
+            ))}
+        </div>
       </div>
     </div>
   );
