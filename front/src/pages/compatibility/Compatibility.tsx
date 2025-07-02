@@ -84,7 +84,14 @@ const getFieldsForCategory = (category: string, comp: any) => {
 
 const Comp: React.FC = () => {
   const [active, setActive] = useState<string | null>(null);
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState<Record<string, string>>({
+    CPU: "",
+    GPU: "",
+    MOTHERBOARD: "",
+    RAM: "",
+    PSU: "",
+    SSD: "",
+  });
   const [selectedComponents, setSelectedComponents] = useState<
     Record<string, string>
   >({});
@@ -113,6 +120,17 @@ const Comp: React.FC = () => {
     RAM: 1,
     PSU: 1,
     SSD: 1,
+  });
+
+  const [categoryTotalPages, setCategoryTotalPages] = useState<
+    Record<string, number>
+  >({
+    CPU: 0,
+    GPU: 0,
+    MOTHERBOARD: 0,
+    RAM: 0,
+    PSU: 0,
+    SSD: 0,
   });
 
   // TODO: Efecto de compatibilidad
@@ -223,38 +241,66 @@ const Comp: React.FC = () => {
     }));
 
     const repo = new ComponentRepositoryImpl();
-    repo
-      .list(Category[active as keyof typeof Category], 0)
-      .then((res) => {
-        setComponentState((prev) => ({
-          ...prev,
-          [active]: { data: res.results, loading: false, error: false },
-        }));
-      })
-      .catch(() => {
-        setComponentState((prev) => ({
-          ...prev,
-          [active]: { ...prev[active], loading: false, error: true },
-        }));
-      });
-  }, [active]);
+    if (query[active] && query[active].trim() !== "") {
+      repo
+        .search(Category[active as keyof typeof Category], query[active])
+        .then((res) => {
+          setCategoryTotalPages((prev) => ({
+            ...prev,
+            [active]: 0,
+          }));
+          setComponentState((prev) => ({
+            ...prev,
+            [active]: {
+              data: res.results,
+              loading: false,
+              error: false,
+            },
+          }));
+        })
+
+        .catch(() => {
+          setComponentState((prev) => ({
+            ...prev,
+            [active]: { ...prev[active], loading: false, error: true },
+          }));
+        });
+    } else {
+      repo
+        .list(
+          Category[active as keyof typeof Category],
+          pageState[active] - 1 || 0
+        )
+        .then((res) => {
+          setCategoryTotalPages((prev) => ({
+            ...prev,
+            [active]: res.totalPages,
+          }));
+          setComponentState((prev) => ({
+            ...prev,
+            [active]: {
+              data: res.results,
+              loading: false,
+              error: false,
+            },
+          }));
+        })
+
+        .catch(() => {
+          setComponentState((prev) => ({
+            ...prev,
+            [active]: { ...prev[active], loading: false, error: true },
+          }));
+        });
+    }
+  }, [active, pageState, query]);
 
   let list: ScrapedComponent[] = [];
   if (active && componentState[active]) {
     list = componentState[active].data.filter((item: ScrapedComponent) =>
-      item.component.name.toLowerCase().includes(query.toLowerCase())
+      item.component.name.toLowerCase().includes(query[active].toLowerCase())
     );
   }
-
-  const paginatedList = (category: string, items: ScrapedComponent[]) => {
-    const currentPage = pageState[category] || 1;
-    const start = (currentPage - 1) * ITEMS_PER_PAGE;
-    const end = start + ITEMS_PER_PAGE;
-    return items.slice(start, end);
-  };
-
-  const totalPages = (category: string, items: ScrapedComponent[]) =>
-    Math.ceil(items.length / ITEMS_PER_PAGE);
 
   return (
     <div className="min-h-screen flex flex-col bg-[var(--background)] text-[var(--foreground)]">
@@ -323,13 +369,13 @@ const Comp: React.FC = () => {
           {icons.map(({ src, alt }, i) => {
             const filteredList = componentState[alt].data.filter(
               (item: ScrapedComponent) =>
-                item.component.name.toLowerCase().includes(query.toLowerCase())
+                item.component.name
+                  .toLowerCase()
+                  .includes(query[alt].toLowerCase())
             );
 
             const currentPage = pageState[alt] || 1;
-            const start = (currentPage - 1) * ITEMS_PER_PAGE;
-            const end = start + ITEMS_PER_PAGE;
-            const paginated = filteredList.slice(start, end);
+            const paginated = filteredList;
 
             return (
               <Card
@@ -342,7 +388,7 @@ const Comp: React.FC = () => {
                 onClick={() => {
                   setDetail(null);
                   setActive(active === alt ? null : alt);
-                  setQuery("");
+                  setQuery((prev) => ({ ...prev, [alt]: "" }));
                 }}
               >
                 {active === alt ? (
@@ -395,10 +441,16 @@ const Comp: React.FC = () => {
                         type="text"
                         className="w-[90%] mx-auto mb-4 px-2 py-1 mb-2 rounded-sm text-sm text-[var(--foreground)] bg-[var(--secondary-background)] shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--main)] transition-all duration-800"
                         placeholder={`Buscar ${alt}...`}
-                        value={query}
-                        onChange={(e) => setQuery(e.target.value)}
+                        value={query[alt]}
+                        onChange={(e) =>
+                          setQuery((prev) => ({
+                            ...prev,
+                            [alt]: e.target.value,
+                          }))
+                        }
                         autoFocus={active === alt}
                       />
+
                       {/*TODO: Lista de Componentes */}
                       <ul className="bg-[var(--background)]/80 ...">
                         {componentState[alt].loading ? (
@@ -440,22 +492,16 @@ const Comp: React.FC = () => {
                               >
                                 ←
                               </button>
+
                               <span className="px-2 text-xs text-gray-600">
                                 Página {currentPage} de{" "}
-                                {Math.ceil(
-                                  filteredList.length / ITEMS_PER_PAGE
-                                )}
+                                {categoryTotalPages[alt]}
                               </span>
+
                               <button
                                 className="px-2 py-1 rounded text-xs text-white"
                                 disabled={
-                                  currentPage ===
-                                    Math.ceil(
-                                      filteredList.length / ITEMS_PER_PAGE
-                                    ) ||
-                                  Math.ceil(
-                                    filteredList.length / ITEMS_PER_PAGE
-                                  ) === 0
+                                  currentPage === categoryTotalPages[alt]
                                 }
                                 onClick={(e) => {
                                   e.stopPropagation();

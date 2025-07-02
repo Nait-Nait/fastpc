@@ -15,15 +15,6 @@ import { useEffect, useState } from "react";
 
 const logedDropdownItems = [
   <DropdownMenuItem
-    onClick={() => {
-      window.location.href = "/perfil";
-    }}
-    className="cursor-pointer"
-  >
-    <User />
-    <span>Perfil</span>
-  </DropdownMenuItem>,
-  <DropdownMenuItem
     onClick={async () => {
       const userRepo = new UserRepositoryImpl();
       await userRepo.logout();
@@ -86,7 +77,7 @@ export default function NavigationMenuDemo() {
               const inputValue = (e.target as HTMLInputElement).value;
 
               const params = new URLSearchParams(window.location.search);
-              params.set("page", "0"); // resetear la pagina
+              params.set("page", "0");
               params.set("search", inputValue);
 
               window.location.href = `/components?${params.toString()}`;
@@ -99,8 +90,11 @@ export default function NavigationMenuDemo() {
           <Button
             className="bg-[var(--foreground)] text-sm"
             onClick={() => {
-              if (logeado) {window.location.href = "/price"}
-              else {window.location.href = "/login"}
+              if (logeado) {
+                window.location.href = "/price";
+              } else {
+                window.location.href = "/login";
+              }
             }}
           >
             Cotización

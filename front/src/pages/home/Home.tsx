@@ -11,6 +11,7 @@ import { Category } from "@/entities/ComponentCategories";
 import { ScrapedComponent } from "@/entities/ScrapedComponent";
 import { ComponentRepositoryImpl } from "@/repositories/ComponentRepository";
 import { GPUComponent } from "@/entities/Component";
+import Marquee from "@/components/ui/marquee";
 
 function SkeletonCard() {
   return (
@@ -37,12 +38,18 @@ export default function Home() {
 
   useEffect(() => {
     const componentRepo = new ComponentRepositoryImpl();
-    componentRepo
-      .list(Category.GPU, 0)
-      .then((value) => {
-        setComponents(value.results);
+    Promise.all([
+      componentRepo.list(Category.GPU, 0),
+      componentRepo.list(Category.GPU, 1),
+    ])
+      .then(([page0, page1]) => {
+        setComponents((prev) => [
+          ...prev,
+          ...(page0.results || []),
+          ...(page1.results || []),
+        ]);
         setLoading(false);
-        console.log(value);
+        console.log({ page0, page1 });
       })
       .catch(() => {
         setError(true);
@@ -65,7 +72,7 @@ export default function Home() {
           <div className="flex flex-col gap-4 text-center">
             <h1 className="text-3xl">
               Componentes Mas{" "}
-              <span className="relative px-2 sm:mr-2 mr-0 md:[&_svg]:size-[45px] sm:[&_svg]:size-7 bg-main/50 rounded-base border-2 border-border/40 dark:border-border/70">
+              <span className="relative px-2 sm:mr-2 mr-0 md:[&_svg]:size-[45px] sm:[&_svg]:size-7 bg-[var(--secondary-background)] rounded-base border-2 border-border/40 dark:border-border/70">
                 Buscados
               </span>{" "}
             </h1>
@@ -81,35 +88,42 @@ export default function Home() {
   }
 
   return (
-    <div>
+    <div className="mb-15">
       <div className="flex flex-row justify-center w-full pb-10">
         <div className="flex flex-col gap-4 text-center">
           <h1 className="text-3xl">
             Componentes Mas{" "}
-            <span className="relative px-2 sm:mr-2 mr-0 md:[&_svg]:size-[45px] sm:[&_svg]:size-7 bg-main/50 rounded-base border-2 border-border/40 dark:border-border/70">
+            <span className="relative px-2 sm:mr-2 mr-0 md:[&_svg]:size-[45px] sm:[&_svg]:size-7 bg-[var(--secondary-background)] rounded-base border-2 border-border/40 dark:border-border/70">
               Buscados
             </span>{" "}
           </h1>
         </div>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {components.slice(0, 7).map((component) => (
-          <>
-            <CardComponent
-              key={component.component.name}
-              name={component.component.name}
-              onClick={() => window.location.href = `/components/component?category=${Category.GPU}&id=${component.component.id}`}
-              description={`precio: ${
-                component.products[0] ? component.products[0].price : "Agotado"
-              }`}
-              img={`${
-                component.products[0]
-                  ? component.products[0].img
-                  : "https://create-react-app.dev/img/logo.svg"
-              }`}
-            />
-          </>
-        ))}
+        {components
+          .filter((value) => {
+            return value.products.length > 0;
+          })
+          .slice(0, 6)
+          .map((component) => (
+            <>
+              <CardComponent
+                key={component.component.name}
+                name={component.component.name}
+                onClick={() =>
+                  (window.location.href = `/components/component?category=${Category.GPU}&id=${component.component.id}`)
+                }
+                description={`precio: ${
+                  component.products[0]
+                    ? `$ ${new Intl.NumberFormat("es-CL").format(
+                        component.products[0].price
+                      )}`
+                    : "Agotado"
+                }`}
+                img={component.products[0]?.img || undefined}
+              />
+            </>
+          ))}
       </div>
     </div>
   );
