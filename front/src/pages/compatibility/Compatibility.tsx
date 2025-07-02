@@ -304,7 +304,7 @@ const Comp: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-[var(--background)] text-[var(--foreground)]">
-      <div className="h-[48px] shrink-0" />
+      <div className="shrink-0" />
 
       <h1 className="mb-4 text-3xl font-bold text-center ">
         Selecciona tus Componentes
