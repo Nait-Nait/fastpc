@@ -1,6 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Product } from "@/entities/Product";
+
+function NameToURL(name: string): string {
+  return "https://www.winpy.cl/venta/" + name.normalize("NFD")                     // separa letras de sus tildes
+    .replace(/[\u0300-\u036f]/g, '')     // elimina las marcas diacríticas (tildes)
+    .toLowerCase()
+    .replace(/[^\w\s./-]/g, '')          // elimina caracteres especiales excepto punto, slash y guion
+    .replace(/[\s./]+/g, '-')            // reemplaza espacios, puntos y slash por guion
+    .replace(/-+/g, '-')                 // colapsa guiones múltiples
+    .replace(/^-|-$/g, '') + "/";              // quita guiones al inicio o al final
+}
 
 const fieldLabels: Record<string, string> = {
   name: "Nombre",
@@ -36,6 +46,21 @@ const ComponentDetailView: React.FC<ComponentDetailViewProps> = ({
   imageUrl,
   products = [],
 }) => {
+  const [position, setPosition] = useState({ x: 50, y: 50 });
+  const [isHovering, setIsHovering] = useState(false);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - left) / width) * 100;
+    const y = ((e.clientY - top) / height) * 100;
+    setPosition({ x, y });
+    setIsHovering(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovering(false);
+  };
+
   const fields = Object.entries(component).filter(
     ([key, value]) =>
       !hiddenFields.includes(key) && value !== undefined && value !== ""
@@ -47,11 +72,25 @@ const ComponentDetailView: React.FC<ComponentDetailViewProps> = ({
         <h1 className="-mt-5 text-3xl font-bold mb-6 text-[var(--foreground)]">
           {component.name}
         </h1>
-        <img
-          src={imageUrl || component.imageUrl || "/placeholder.png"}
-          alt={component.name}
-          className="w-full max-w-[480px] rounded-xl shadow mb-6"
-        />
+
+        {/* Zoom wrapper */}
+        <div
+          className="w-full max-w-[480px] h-auto overflow-hidden rounded-xl shadow mb-6 relative"
+          onMouseMove={handleMouseMove}
+          onMouseLeave={handleMouseLeave}
+        >
+          <img
+            src={imageUrl || component.imageUrl || "/placeholder.png"}
+            alt={component.name}
+            style={{
+              transform: isHovering ? "scale(1.8)" : "scale(1)",
+              transformOrigin: `${position.x}% ${position.y}%`,
+              transition: "transform 0.2s ease",
+            }}
+            className="w-full h-auto object-cover cursor-zoom-in"
+          />
+        </div>
+
         <div className="w-full">
           <h3 className="text-lg font-semibold mb-2 text-center">
             Precios en tiendas
@@ -82,7 +121,7 @@ const ComponentDetailView: React.FC<ComponentDetailViewProps> = ({
         </div>
       </div>
 
-      <div className="flex-1 flex-1 -ml-20 mt-10">
+      <div className="flex-1 -ml-20 mt-10">
         <div className="bg-[var(--secondary-background)] rounded-xl p-4 shadow-sm">
           <h2 className="font-semibold text-[16px] mb-2 text-[var(--main)]">
             Características
@@ -98,7 +137,7 @@ const ComponentDetailView: React.FC<ComponentDetailViewProps> = ({
         </div>
 
         {products.length > 0 && (
-          <div className="mt-6">
+          <div className="mt-">
             <h2 className="font-semibold text-[16px] mb-2 text-[var(--main)]">
               Productos relacionados
             </h2>
@@ -108,11 +147,19 @@ const ComponentDetailView: React.FC<ComponentDetailViewProps> = ({
                   key={index}
                   className="bg-[var(--secondary-background)] p-3 rounded-lg shadow-sm"
                 >
-                  <div className="flex items-center gap-3">
+                  <div
+                    onClick={() => {
+                      window.location.replace(NameToURL(product.name));
+                    }}
+                    className="flex items-center gap-3 cursor-pointer"
+                  >
                     <img
                       src={product.img || "/placeholder.png"}
+                      onClick={() => {
+                        window.location.replace(NameToURL(product.name));
+                      }}
                       alt={product.name}
-                      className="w-16 h-16 object-cover rounded-md"
+                      className="w-16 h-16 object-cover rounded-md transition-transform duration-300 hover:scale-110"
                     />
                     <div>
                       <h3 className="text-sm font-semibold text-[var(--foreground)]">
@@ -130,6 +177,7 @@ const ComponentDetailView: React.FC<ComponentDetailViewProps> = ({
               ))}
             </ul>
           </div>
+
         )}
       </div>
     </div>

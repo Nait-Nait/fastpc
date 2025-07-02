@@ -10,8 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Category } from "@/entities/ComponentCategories";
 import { ScrapedComponent } from "@/entities/ScrapedComponent";
 import { ComponentRepositoryImpl } from "@/repositories/ComponentRepository";
-import { GPUComponent } from "@/entities/Component";
-import Marquee from "@/components/ui/marquee";
+
 
 function SkeletonCard() {
   return (

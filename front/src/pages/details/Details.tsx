@@ -5,6 +5,10 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import ComponentDetailView from "@/components/ComponentDetailView";
 
+function NameToURL(name:string): string {
+  return "https://www.winpy.cl/venta/" + name.toLocaleLowerCase().replace(" ", "-")
+}
+
 export default function Details() {
   const [searchParams] = useSearchParams();
 

@@ -7,6 +7,8 @@ export enum WinpyProductCategory {
     PARTES_Y_PIEZAS = 'PARTES Y PIEZAS', // solo nos interesa esta
     COMPUTADORES = 'COMPUTADORES',
     ACCESORIOS = 'ACCESORIOS',
+    MEMORIAS = 'MEMORIAS', // aaaa
+    ALMACENAMIENTO = 'ALMACENAMIENTO',
     DESCONOCIDO = 'DESCONOCIDO'
 }
 
@@ -79,7 +81,7 @@ export class WinpyComponentSource implements ComponentSource {
         }
         const results: any[] = (await response.json() as any).products;
 
-        const filteredResults = results.filter((value) => value.category == WinpyProductCategory.PARTES_Y_PIEZAS)
+        const filteredResults = results.filter((value) => value.category == WinpyProductCategory.PARTES_Y_PIEZAS || value.category == WinpyProductCategory.MEMORIAS || value.category == WinpyProductCategory.ALMACENAMIENTO)
 
         // TODO: make a function to resolve category
         return filteredResults.map((value: any) => new WinpyProduct(value.name, value.price, WinpyProductCategory.PARTES_Y_PIEZAS, value.instock, value.brand, value.description, value.rank, value.image))
